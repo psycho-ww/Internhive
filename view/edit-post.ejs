@@ -1,0 +1,181 @@
+<style>
+    :root {
+        --primary-glow: linear-gradient(135deg, #a24ef1 0%, #4979f2 50%, #fe47e0 100%);
+        --bg-surface: #ffffff;
+        --text-main: #1e1b4b;
+        --text-muted: #6b7280;
+        --input-border: #e2e8f0;
+        --input-focus: #a855f7;
+        --error-bg: #fff1f2;
+        --error-text: #e11d48;
+    }
+     :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Safeguards against horizontal viewport overflow on mobile devices */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+    /* Form Wrapper Container - Fluid Sizing */
+    .edit-project-container {
+        max-width: 600px; 
+        width: 100%;
+        margin: clamp(20px, 4vw, 40px) auto; 
+        padding: clamp(15px, 3vw, 25px); 
+        background: white; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        font-family: sans-serif;
+        box-sizing: border-box;
+    }
+    .edit-project-title {
+        color: #1e293b; 
+        margin-top: 0; 
+        margin-bottom: 20px; 
+        border-bottom: 2px solid #f1f5f9; 
+        padding-bottom: 10px;
+        font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+        word-break: break-word;
+    }
+    /* Input Groups & Labels */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group-file {
+        margin-bottom: 20px;
+    }
+    .form-label {
+        display: block; 
+        margin-bottom: 6px; 
+        font-weight: 600; 
+        color: #475569;
+        font-size: 14px;
+    }
+    .form-input {
+        width: 100%; 
+        padding: 10px; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 6px; 
+        font-size: 14px;
+        box-sizing: border-box; /* padding ကြောင့် width တစ်ဖက်လျှံမထွက်စေရန် */
+    }
+    .form-textarea {
+        width: 100%; 
+        padding: 10px; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 6px; 
+        font-size: 14px; 
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    /* Media Asset Info & File Input */
+    .current-asset-text {
+        margin: 0 0 8px 0; 
+        font-size: 12px; 
+        color: #64748b;
+        word-break: break-all;
+    }
+    .asset-link {
+        color: #3b82f6;
+    }
+    .file-input {
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    /* Action Buttons Area */
+    .btn-action-container {
+        display: flex; 
+        gap: 10px; 
+        justify-content: flex-end;
+        flex-wrap: wrap; /* Allows buttons to wrap cleanly on narrow phone screens */
+    }
+    .btn-cancel {
+        padding: 10px 20px; 
+        background: #e2e8f0; 
+        color: #475569; 
+        text-decoration: none; 
+        border-radius: 6px; 
+        font-weight: 600; 
+        font-size: 14px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .btn-save {
+        padding: 10px 20px; 
+        background: #22c55e; 
+        color: white; 
+        border: none; 
+        border-radius: 6px; 
+        font-weight: 600; 
+        font-size: 14px; 
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    /* 📱 Responsive Media Query Additions for Mobile Viewports */
+    @media (max-width: 480px) {
+        .edit-project-container {
+            margin: 10px auto;
+            border-radius: 0; /* Full edge-to-edge layout on very small smartphone screens */
+            min-height: 100vh;
+        }
+        .btn-action-container {
+            flex-direction: column-reverse; /* Stacks action buttons vertically with primary save button placed comfortably on top */
+            width: 100%;
+        }
+        .btn-cancel, .btn-save {
+            width: 100%;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="edit-project-container">
+    <h2 class="edit-project-title">✏️ Modify Project Showcase</h2>
+    
+    <form action="/post/update/<%= post.id %>" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label">Project Title</label>
+            <input type="text" name="title" value="<%= post.title %>" required class="form-input">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Project Narrative Text</label>
+            <textarea name="content" rows="6" required class="form-textarea"><%= post.content %></textarea>
+        </div>
+        <div class="form-group-file">
+            <label class="form-label">Replace Asset Image (Optional)</label>
+            <% if (post.image_url) { %>
+                <p class="current-asset-text">Current Asset: <a href="/uploads/<%= post.image_url %>" target="_blank" class="asset-link"><%= post.image_url %></a></p>
+            <% } %>
+            <input type="file" name="post_img" accept="image/*" class="file-input">
+        </div>
+        <div class="btn-action-container">
+            <a href="/profile" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save">Save Changes</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+```[cite: 9]

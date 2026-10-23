@@ -1,0 +1,245 @@
+<style>
+    /* Modern Purple Theme Variables */
+    :root {
+        --primary-glow: linear-gradient(135deg, #a24ef1 0%, #4979f2 50%, #fe47e0 100%);
+        --bg-surface: #ffffff;
+        --text-main: #1e1b4b;
+        --text-muted: #6b7280;
+        --input-border: #e2e8f0;
+        --input-focus: #a855f7;
+        --error-bg: #fff1f2;
+        --error-text: #e11d48;
+    }
+     :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevents horizontal viewport overflow on mobile devices */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+    /* Form Wrapper & Card Styles - Optimized for Responsiveness */
+    .login-container {
+        max-width: 450px;
+        width: 100%;
+        margin: clamp(20px, 6vw, 60px) auto;
+        padding: clamp(10px, 3vw, 20px);
+        position: relative;
+        box-sizing: border-box;
+    }
+    
+    /* Soft glamorous background glow behind the card */
+    .login-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 25px;
+        right: 25px;
+        bottom: 0;
+        background: var(--primary-glow);
+        background-size: 200% auto;
+        filter: blur(40px);
+        opacity: 0.15;
+        z-index: -1;
+    }
+    .login-card {
+        padding: clamp(25px, 5vw, 40px) clamp(20px, 4vw, 30px);
+        border-radius: 24px; /* Sleeker modern radius */
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+        background: var(--bg-surface);
+        border: 1px solid rgba(168, 85, 247, 0.1);
+        box-sizing: border-box;
+        width: 100%;
+    }
+    
+    /* Typography Styles */
+    .login-title {
+        text-align: center;
+        font-size: clamp(1.8rem, 4vw, 32px); 
+        font-weight: 800;
+        background: var(--primary-glow);
+        background-size: 200% auto; /* Necessary to let the colors move/run */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmerEffect 4s linear infinite; /* Animates the background position */
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+        word-break: break-word;
+    }
+    
+    @keyframes shimmerEffect {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .login-subtitle {
+        text-align: center;
+        color: var(--text-main);
+        font-size: clamp(14px, 2vw, 16px);
+        margin-bottom: 32px;
+    }
+    
+    /* Error Message Styles */
+    .error-box {
+        background-color: var(--error-bg);
+        color: var(--error-text);
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 24px;
+        font-weight: 600;
+        border: 1px solid rgba(225, 29, 72, 0.15);
+        word-break: break-word;
+    }
+    
+    /* Form Elements Styles */
+    .form-group-field {
+        margin-bottom: 20px;
+        position: relative; /* Added to keep your absolute images locked inside the container */
+    }
+    .form-group-last {
+        margin-bottom: 24px;
+        position: relative; /* Added to keep your absolute images locked inside the container */
+    }
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .form-input {
+        width: 100%;
+        padding: 14px 45px 14px 16px; /* Added extra padding-right so text doesn't type over your images */
+        border: 1px solid var(--input-border);
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        background-color: #f8fafc;
+        color: var(--text-main);
+        transition: all 0.25s ease;
+        box-sizing: border-box;
+    }
+    .form-input:focus {
+        border-color: var(--primary-glow);
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15);
+    }
+    .form-group-field img,
+    .form-group-last img {
+        position: absolute;
+        right: 16px;
+        bottom: 14px; /* Perfectly aligns the icon inside the input field */
+        font-size: 20px;
+        pointer-events: none; /* Prevents icons from blocking input clicks */
+    }
+    /* Button & Footer Link Styles */
+    .submit-btn {
+        width: 100%;
+        background: var(--input-focus);
+        background-size: 200% auto;
+        color: white;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+        box-sizing: border-box;
+    }
+    .submit-btn:hover {
+        color: #14bff4;
+        background-position: right center; /* Subtle moving gradient on hover too */
+        opacity: 0.95;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+    }
+    .submit-btn:active {
+        transform: translateY(1px);
+    }
+    .form-footer {
+        margin-top: 28px;
+        text-align: center;
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+    .register-link {
+        color: #8b5cf6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    .register-link:hover {
+        color: #14bff4;
+        text-decoration: underline;
+    }
+
+    /* 📱 Responsive Media Query for Very Small Screens */
+    @media (max-width: 480px) {
+        .login-container {
+            margin: 10px auto;
+            padding: 5px;
+        }
+        .login-card {
+            border-radius: 16px;
+            padding: 20px 15px;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="login-container">
+    <div class="card login-card">
+        <h2 class="login-title">Welcome Back</h2>
+        <p class="login-subtitle">Access your personal  internship portal</p>
+        
+        <% if (error) { %>
+            <div class="error-box">
+                ⚠ <%= error %>
+            </div>
+        <% } %>
+        <form action="/login" method="POST">
+            <div class="form-group-field">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" required placeholder="name123@gmail.com" class="form-input">
+                <img src="/images/user_6717291.png" alt="Home" style="width:20px; height:20px; vertical-align:middle;">
+            </div>
+            <div class="form-group-last">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" required placeholder="••••••••" class="form-input">
+                <img src="/images/lock_3624812.png" alt="Home" style="width:20px; height:20px; vertical-align:middle;">
+            </div>
+            <button type="submit" class="btn submit-btn">
+                Sign In
+            </button>
+        </form>
+        <div class="form-footer">
+            Don't have an account? <a href="/register" class="register-link">Register here</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

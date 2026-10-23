@@ -1,0 +1,308 @@
+<%- include('partials/header') %>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6b46c1, #9333ea);
+        --dark-text: #1e293b;
+        --light-text: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-glow: 0 10px 25px rgba(107, 70, 193, 0.05);
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+    }
+    :root {
+        --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+        --bg-glass: rgba(255, 255, 255, 0.85);
+        --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; /* Protects against horizontal scrolling on small phone viewports */
+    }
+    .gemini-bg {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+        background-size: 400% 400%;
+        animation: geminiGradient 15s ease infinite;
+    }
+    @keyframes geminiGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    /* Dashboard Container - Fluid Sizing for Phone, Tablet, Laptop */
+    .dashboard-container {
+        max-width: 850px;
+        width: 100%;
+        margin: clamp(15px, 4vw, 40px) auto;
+        padding: 0 clamp(10px, 3vw, 20px);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        box-sizing: border-box;
+    }
+    /* Welcome Banner Section */
+    .welcome-banner {
+        background: var(--primary-gradient);
+        color: white;
+        padding: clamp(18px, 4vw, 30px);
+        border-radius: 20px;
+        margin-bottom: clamp(20px, 3vw, 30px);
+        box-shadow: 0 10px 25px rgba(107, 70, 193, 0.15);
+        box-sizing: border-box;
+    }
+    .welcome-banner h1 {
+        margin: 0 0 8px 0;
+        font-size: clamp(1.3rem, 3.5vw, 26px);
+        font-weight: 700;
+        word-break: break-word;
+    }
+    .welcome-banner p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: clamp(0.85rem, 2vw, 14.5px);
+        line-height: 1.5;
+    }
+    /* Tab Menu Bar Layout - Responsive Wrap */
+    .tab-menu-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #f1f5f9;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 6px;
+        margin-bottom: clamp(20px, 3vw, 30px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .tab-btn {
+        flex: 1 1 200px; /* Stacks gracefully on smaller mobile screens */
+        background: transparent;
+        border: none;
+        padding: 12px 16px;
+        font-size: clamp(0.85rem, 2vw, 15px);
+        font-weight: 600;
+        color: var(--light-text);
+        cursor: pointer;
+        border-radius: 10px;
+        transition: var(--transition-smooth);
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .tab-btn.active {
+        background: #ffffff;
+        color: #6b46c1;
+        box-shadow: 0 4px 12px rgba(107, 70, 193, 0.12);
+    }
+    /* Content Panel Area */
+    .tab-content-panel {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: clamp(16px, 4vw, 30px);
+        box-shadow: var(--shadow-glow);
+        border: 1px solid rgba(107, 70, 193, 0.03);
+        min-height: 300px;
+        box-sizing: border-box;
+    }
+    .tab-pane {
+        display: none;
+        animation: fadeIn 0.4s ease;
+    }
+    .tab-pane.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* Internship List Styles */
+    .app-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .app-item {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        transition: var(--transition-smooth);
+        box-sizing: border-box;
+    }
+    .app-item:hover {
+        border-color: #c084fc;
+        background: #fafafa;
+    }
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .status-applied { background: #fef3c7; color: #d97706; }
+    .status-shortlisted { background: #dbeafe; color: #1e40af; }
+    .status-scheduled { background: #e0f2fe; color: #0369a1; }
+    .status-accepted { background: #d1fae5; color: #059669; }
+    .status-rejected { background: #fee2e2; color: #dc2626; }
+    
+    /* Notification Box Styles */
+    .noti-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .noti-box {
+        padding: 18px;
+        border-radius: 12px;
+        font-size: 14px;
+        border-left: 4px solid #9333ea;
+        background: #fdfafe;
+        box-sizing: border-box;
+        word-break: break-word;
+    }
+    .feedback-msg {
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: rgba(255,255,255,0.8);
+        border-radius: 6px;
+        border: 1px dashed #cbd5e1;
+        font-style: italic;
+        color: var(--dark-text);
+        word-break: break-word;
+    }
+
+    /* 📱 Responsive Adjustments for Mobile Displays */
+    @media (max-width: 576px) {
+        .app-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .tab-btn {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="dashboard-container">
+    <div class="welcome-banner">
+        <h1>👋 Welcome Back, <%= user.name %>!</h1>
+        <p>Track your submitted internship requests, view live status updates, and stay on top of real-time employer notifications all from your centralized hub.</p>
+    </div>
+    
+    <div class="tab-menu-bar">
+        <button class="tab-btn active" onclick="switchTab(event, 'internships')">
+            💼 My Internship Applications
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'notifications')">
+            🔔 Live Alerts (<%= notifications.length %>)
+        </button>
+    </div>
+    <div class="tab-content-panel">
+        <!-- TAB 1: Internship Applications List View -->
+        <div id="internships" class="tab-pane active">
+            <h3 style="margin-top: 0; color: #4c1d95; font-size: 18px; margin-bottom: 20px;">Submitted Internship Requests</h3>
+            
+            <% if (appliedCompanies.length === 0) { %>
+                <p style="color: var(--light-text); font-style: italic; text-align: center; padding: 40px 0;">
+                    You haven't applied to any internship posts yet.
+                </p>
+            <% } else { %>
+                <div class="app-list">
+                    <% appliedCompanies.forEach(app => { %>
+                        <div class="app-item">
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; font-size: 16px; color: #1e3a8a;"><%= app.job_title %></h4>
+                                <p style="margin: 0; font-size: 13px; color: var(--light-text);">
+                                    🏢 <b><%= app.company_name %></b>
+                                </p>
+                                <small style="color: #94a3b8; font-size: 11px; display: block; margin-top: 5px;">
+                                    Applied on: <%= new Date(app.applied_at).toDateString() %>
+                                </small>
+                            </div>
+                            <div>
+                                <span class="badge-status status-<%= app.status %>">
+                                    <%= app.status %>
+                                </span>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+        <!-- TAB 2: Live Notifications Tracker View -->
+        <div id="notifications" class="tab-pane">
+            <h3 style="margin-top: 0; color: #4c1d95; font-size: 18px; margin-bottom: 20px;">Recent Application Alerts</h3>
+            
+            <% if (notifications.length === 0) { %>
+                <p style="color: var(--light-text); font-style: italic; text-align: center; padding: 40px 0;">
+                    No recent updates or interview invites yet.
+                </p>
+            <% } else { %>
+                <div class="noti-list">
+                    <% notifications.forEach(noti => { %>
+                        <!-- Dynamic borders and backgrounds based on the new pipeline statuses -->
+                        <div class="noti-box" style="
+                            border-left: 4px solid 
+                            <%= noti.status === 'shortlisted' ? '#3b82f6' : 
+                                noti.status === 'scheduled' ? '#a855f7' : 
+                                noti.status === 'hired' ? 'var(--success-color)' : 'var(--danger-color)' %>;
+                            background: 
+                            <%= noti.status === 'shortlisted' ? '#f0f6ff' : 
+                                noti.status === 'scheduled' ? '#faf5ff' : 
+                                noti.status === 'hired' ? '#f0fdf4' : '#fef2f2' %>;
+                        ">
+                            <p style="margin: 0; line-height: 1.4; color: var(--dark-text);">
+                                <% if (noti.status === 'shortlisted') { %>
+                                    ✨ <b>Good News!</b> Your application for <b><%= noti.job_title %></b> at <b><%= noti.company_name %></b> has been <b>SHORTLISTED</b> by the hiring team.
+                                <% } else if (noti.status === 'scheduled') { %>
+                                    📅 <b>Interview Invitation!</b> <b><%= noti.company_name %></b> has scheduled an interview with you for the <b><%= noti.job_title %></b> role.
+                                    <div style="margin-top: 10px; font-size: 13px; background: white; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                        🕒 <b>Interview Schedule:</b> <span style="color: #6b46c1; font-weight: 600;"><%= new Date(noti.interview_date).toLocaleString() %></span><br>
+                                        🔗 <b>Meeting Link:</b> <a href="<%= noti.interview_link %>" target="_blank" style="color: #9333ea; font-weight: bold; text-decoration: underline;">Join Interview Meeting ↗</a>
+                                    </div>
+                                <% } else if (noti.status === 'hired') { %>
+                                    🎉 <b>Congratulations!</b> Your application for <b><%= noti.job_title %></b> at <b><%= noti.company_name %></b> has been <span style="color: var(--success-color); font-weight: bold;">ACCEPTED</span>.
+                                    <% if (noti.company_message) { %>
+                                        <div class="feedback-msg">
+                                            ✉️ Company Note: "<%= noti.company_message %>"
+                                        </div>
+                                    <% } %>
+                                <% } else if (noti.status === 'rejected') { %>
+                                    💼 Update regarding your application for <b><%= noti.job_title %></b> at <b><%= noti.company_name %></b>: The application status is <span style="color: var(--danger-color); font-weight: bold;">REJECTED</span>.
+                                    
+                                <% } %>
+                            </p>
+                            <small style="color: #94a3b8; font-size: 11px; display: block; margin-top: 8px;">
+                                Notification Tracked: <%= new Date(noti.applied_at).toDateString() %>
+                            </small>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<script>
+    function switchTab(event, tabId) {
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        tabPanes.forEach(pane => pane.classList.remove('active'));
+        
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+</script>
+<%- include('partials/footer') %>

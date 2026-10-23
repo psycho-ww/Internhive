@@ -1,0 +1,679 @@
+<%- include('partials/header') %>
+<!-- Link configuration for external styles. Un-comment if moving to external style.css asset -->
+<!-- <link rel="stylesheet" href="/css/style.css"> -->
+<style>
+  :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevents unwanted horizontal scrolling on mobile screens */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+/* 📱 Vertical Sidebar Layout Configuration - Responsive Flex Adjustment */
+.admin-container {
+    display: flex;
+    max-width: 100%;
+    margin: 0;
+    min-height: calc(100vh - 80px);
+    gap: 20px;
+    padding: 15px 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+.admin-nav-bar {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 20px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    width: 280px;
+    min-width: 250px;
+    height: calc(100vh - 120px);
+    position: sticky;
+    top: 20px;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.nav-brand-area {
+    padding: 10px; 
+    text-align: center; 
+    border-bottom: 1px solid #f1f5f9; 
+    margin-bottom: 15px;
+}
+.nav-brand-icon {
+    font-size: 24px;
+}
+.nav-brand-title {
+    margin: 5px 0 0 0; 
+    color: #0f172a; 
+    font-weight: 700;
+}
+.nav-tab-btn {
+    padding: 12px 15px;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: #475569;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+    font-size: 14px;
+}
+.nav-tab-btn:hover { 
+    background: #f1f5f9; 
+    color: #0f172a; 
+}
+.nav-tab-btn.active { 
+    background: #9333ea; 
+    color: white; 
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.2); 
+}
+.admin-main-content {
+    flex: 1;
+    min-width: 0;
+}
+.content-header-block {
+    margin-bottom: 25px;
+}
+.content-header-title {
+    color: #0f172a; 
+    margin: 0; 
+    font-size: clamp(1.4rem, 3vw, 28px); /* Responsive fluid header font scaling */
+}
+.content-header-status {
+    color: #64748b; 
+    margin: 5px 0 0 0;
+    font-size: 14px;
+}
+/* Content Sections Hide/Show Control */
+.dashboard-section { 
+    display: none; 
+    animation: fadeIn 0.4s ease; 
+}
+.dashboard-section.active-section { 
+    display: block; 
+}
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+/* UI Styling Blocks */
+.stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 15px; 
+    margin-bottom: 30px; 
+}
+.stats-card { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 12px; 
+    border: 1px solid #e2e8f0; 
+    box-shadow: var(--card-shadow); 
+}
+.stats-label { 
+    color: #64748b; 
+    font-size: 13px; 
+    font-weight: 600; 
+}
+.stats-number { 
+    font-size: 28px; 
+    font-weight: 700; 
+    margin-top: 5px; 
+}
+.stats-number.undergrad { color: #2563eb; }
+.stats-number.corporate { color: #16a34a; }
+.stats-number.placement { color: #ca8a04; }
+.section-box { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 12px; 
+    border: 1px solid #e2e8f0; 
+    box-shadow: var(--card-shadow); 
+    margin-bottom: 25px; 
+    overflow-x: auto; /* Safeguards elements against boundary overflow */
+}
+.section-box.accent-verification {
+    border: 2px solid #3b82f6;
+}
+.section-title-blue { color: #1e3a8a; margin-top: 0; font-size: clamp(1.1rem, 2vw, 1.5rem); }
+.section-title-blue-bright { color: #1d4ed8; margin-top: 0; font-size: clamp(1.1rem, 2vw, 1.5rem); }
+.section-title-dark { color: #1e293b; font-size: clamp(1.1rem, 2vw, 1.5rem); }
+.section-title-gold { color: #ca8a04; margin-top: 0; font-size: clamp(1.1rem, 2vw, 1.5rem); }
+.subsection-title { color: #475569; font-size: 1.1rem; }
+.subsection-title.with-divider {
+    margin-top: 20px; 
+    border-top: 1px dashed #cbd5e1; 
+    padding-top: 15px;
+}
+.text-summary { 
+    color: #475569; 
+    line-height: 1.6; 
+}
+.text-empty-state {
+    color: #94a3b8; 
+    font-style: italic;
+}
+.data-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth touch scrolling for tables on tablets/phones */
+}
+.data-table { 
+    width: 100%; 
+    min-width: 600px; /* Protects inner layout integrity on narrower phone views */
+    border-collapse: collapse; 
+    text-align: left; 
+    font-size: 14px; 
+}
+.data-table th { 
+    padding: 12px 10px; 
+    background: #f8fafc; 
+    color: #475569; 
+    border-bottom: 2px solid #e2e8f0; 
+    white-space: nowrap;
+}
+.data-table td { 
+    padding: 12px 10px; 
+    border-bottom: 1px solid #f1f5f9; 
+    vertical-align: middle; 
+}
+.student-meta-text {
+    font-size: 12px; 
+    color: #64748b;
+}
+.affiliation-text {
+    font-size: 13px; 
+    color: #475569;
+}
+/* Cards & Pipelines */
+.pipeline-item {
+    background: #f8fafc; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    border: 1px solid #e2e8f0;
+}
+.pipeline-flex-wrapper {
+    display: flex; 
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+    gap: 15px;
+}
+.pipeline-content-col {
+    flex: 1; 
+    min-width: 220px;
+    word-break: break-word;
+}
+.pipeline-actions-col {
+    display: flex; 
+    gap: 5px; 
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.pipeline-item-text {
+    margin: 5px 0; 
+    font-size: 14px;
+}
+.live-feed-item {
+    padding: 15px; 
+    border-bottom: 1px solid #f1f5f9;
+}
+.live-feed-row {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+/* Image Preview Styling */
+.image-attach-wrapper {
+    margin-top: 8px;
+}
+.image-attach-label {
+    color: #64748b; 
+    display: block;
+}
+.admin-post-preview-img {
+    width: 100%;
+    max-width: 250px;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #e2e8f0;
+    display: block;
+    cursor: pointer;
+}
+.profile-clickable-img {
+    width: 38px; 
+    height: 38px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    cursor: pointer; 
+    transition: transform 0.2s;
+}
+.profile-clickable-img:hover { 
+    transform: scale(1.1); 
+}
+/* Action Controls Buttons */
+.btn-danger { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; }
+.btn-danger:hover { background: #dc2626; }
+.btn-secondary { background: #475569; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 13px; white-space: nowrap; }
+.btn-approve { background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.btn-reject { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; white-space: nowrap; }
+/* Status Labels & Badges */
+.badge-role { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+.badge-student { background: #eff6ff; color: #1d4ed8; }
+.badge-company { background: #f0fdf4; color: #166534; }
+.inline-form { display: inline-block; margin: 0; gap: 5px; }
+.edit-inline-box { background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #3b82f6; width: 100%; box-sizing: border-box; }
+.form-input-field {
+    width: 100%; 
+    padding: 8px; 
+    margin: 5px 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+/* Messaging System Extensions */
+.message-stack {
+    display: grid; 
+    gap: 15px;
+}
+.message-card {
+    border: 1px solid #e2e8f0; 
+    padding: 15px; 
+    border-radius: 8px; 
+    background: #fafafa;
+    word-break: break-word;
+}
+.message-meta {
+    font-size: 13px; 
+    color: #475569;
+}
+.message-body {
+    color: #0f172a; 
+    margin: 10px 0; 
+    font-size: 14px;
+}
+.message-reply-box {
+    background: #ecfdf5; 
+    color: #065f46; 
+    padding: 10px; 
+    border-radius: 6px; 
+    font-size: 13px; 
+    margin-top: 5px;
+}
+.message-reply-form {
+    margin-top: 10px; 
+    display: flex; 
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* 📱 Responsive Media Query for Tablets & Mobile Phones */
+@media (max-width: 992px) {
+    .admin-container {
+        flex-direction: column; /* Automatically stacks sidebar vertically on tablets/mobile screens */
+        padding: 10px;
+        gap: 15px;
+    }
+    .admin-nav-bar {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px;
+        gap: 8px;
+    }
+    .nav-brand-area {
+        display: none; /* Hides duplicate branding header on mobile to optimize screen real estate */
+    }
+    .nav-tab-btn {
+        width: auto;
+        flex: 1 1 130px;
+        justify-content: center;
+        padding: 10px;
+        font-size: 13px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-container {
+        padding: 5px;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stacks overview metrics into a single readable column on small phones */
+    }
+    .pipeline-flex-wrapper, .live-feed-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .pipeline-actions-col {
+        margin-top: 10px;
+        justify-content: flex-start;
+    }
+}
+</style>
+<div class="gemini-bg"></div>
+<div class="admin-container">
+    <!-- 🎛️ Dynamic Vertical Sidebar System -->
+    <nav class="admin-nav-bar">
+        <div class="nav-brand-area">
+            <span class="nav-brand-icon">👑</span>
+            <h3 class="nav-brand-title">Admin Panel</h3>
+        </div>
+        <button class="nav-tab-btn active" onclick="switchTab(event, 'overview-sec')">📊 Overview States</button>
+        <button class="nav-tab-btn" onclick="switchTab(event, 'user-sec')">👥 User Management</button>
+        <button class="nav-tab-btn" onclick="switchTab(event, 'post-sec')">📝 Post Hub</button>
+        <button class="nav-tab-btn" onclick="switchTab(event, 'placement-sec')">🎓 Placements</button>
+        <button class="nav-tab-btn" onclick="switchTab(event, 'message-sec')">📬 User Messages</button>
+    </nav>
+    <!-- Main Content Panel -->
+    <div class="admin-main-content">
+        <div class="content-header-block">
+            <h1 class="content-header-title">Executive Command Control Center</h1>
+            <p class="content-header-status">System upgrade fully active. Data integrity completely safe.</p>
+        </div>
+        <!-- SECTION 1: OVERVIEW STATS -->
+        <div id="overview-sec" class="dashboard-section active-section">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <div class="stats-label">Registered Undergrads</div>
+                    <div class="stats-number undergrad"><%= stats.total_students %></div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">Corporate Clients</div>
+                    <div class="stats-number corporate"><%= stats.total_companies %></div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">Successful Placements</div>
+                    <div class="stats-number placement"><%= stats.placed %> Jobs</div>
+                </div>
+            </div>
+            <div class="section-box">
+    <h3>💡 Quick Summary</h3>
+    <p class="text-summary">The system is actively monitoring platform operations. All modules are fully synchronized, and security logs are up to date. Review recent events and track metrics using the navigation panel.</p>
+</div>
+        </div>
+        <!-- SECTION 2: USER MANAGEMENT -->
+        <div id="user-sec" class="dashboard-section">
+            <div class="section-box">
+                <h2 class="section-title-blue">👥 Holistic User Accounts Ledger</h2>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Avatar</th>
+                                <th>Account Name</th>
+                                <th>Email Address</th>
+                                <th>Affiliation / Industry</th>
+                                <th>Role Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Students -->
+                            <% students.forEach(s => { %>
+                                <tr>
+                                    <td>
+                                        <a href="/user/profile/<%= s.id %>">
+                                            <img src="/uploads/<%= s.profile_pic || 'default-avatar.png' %>" class="profile-clickable-img" title="Click to view profile">
+                                        </a>
+                                    </td>
+                                    <td><b><%= s.name %></b></td>
+                                    <td><%= s.email %></td>
+                                    <td><span class="affiliation-text"><%= s.uni %> (<%= s.major %>)</span></td>
+                                    <td><span class="badge-role badge-student">Student</span></td>
+                                    <td>
+                                        <form action="/admin/user/delete/<%= s.id %>" method="POST" class="inline-form" onsubmit="return confirm('Warning! Deleting this student account will wipe their related posts and applications. Proceed?');">
+                                            <button class="btn-danger">🗑️ Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            <!-- Companies -->
+                            <% companies.forEach(c => { %>
+                                <tr>
+                                    <td>
+                                        <a href="/user/profile/<%= c.id %>">
+                                            <img src="/uploads/<%= c.profile_pic || 'default-avatar.png' %>" class="profile-clickable-img" title="Click to view profile">
+                                        </a>
+                                    </td>
+                                    <td><b><%= c.name %></b></td>
+                                    <td><%= c.email %></td>
+                                    <td><span class="affiliation-text"><%= c.industry || 'General Sector' %> · <%= c.location %></span></td>
+                                    <td><span class="badge-role badge-company">Company</span></td>
+                                    <td>
+                                        <form action="/admin/user/delete/<%= c.id %>" method="POST" class="inline-form" onsubmit="return confirm('Warning! Deleting this corporate account will eliminate their vacancies. Proceed?');">
+                                            <button class="btn-danger">🗑️ Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+       <!-- SECTION 3: POST & VACANCY HUB -->
+        <div id="post-sec" class="dashboard-section">
+            <div class="section-box accent-verification">
+                <h2 class="section-title-blue-bright">🔔 Pending Verification Pipeline</h2>
+                
+                <h3 class="subsection-title">🎓 Student Showcases Pending (<%= pendingPosts.length %>)</h3>
+                <% if (pendingPosts.length === 0) { %><p class="text-empty-state">No student requests pending.</p><% } %>
+                <% pendingPosts.forEach(post => { %>
+                    <div class="pipeline-item">
+                        <div class="pipeline-flex-wrapper">
+                            <div class="pipeline-content-col">
+                                <strong><%= post.title %></strong> <span class="student-meta-text">by <%= post.student_name %></span>
+                                <p class="pipeline-item-text"><%= post.content %></p>
+                                
+                                <% if (post.image_url) { %>
+                                    <div class="image-attach-wrapper">
+                                        <small class="image-attach-label">Attached Image:</small>
+                                        <img src="/uploads/<%= post.image_url %>" class="admin-post-preview-img" onclick="window.open(this.src)">
+                                    </div>
+                                <% } else { %>
+                                    <small class="text-empty-state">No image uploaded for this post.</small>
+                                <% } %>
+                            </div>
+                            <div class="pipeline-actions-col">
+                                <form action="/admin/post/<%= post.id %>/approve" method="POST" class="inline-form"><button class="btn-approve">✓ Approve</button></form>
+                                <form action="/admin/post/<%= post.id %>/reject" method="POST" class="inline-form"><button class="btn-reject">✕ Reject</button></form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+                <h3 class="subsection-title with-divider">💼 Corporate Internships Pending (<%= pendingJobs.length %>)</h3>
+                <% if (pendingJobs.length === 0) { %><p class="text-empty-state">No internship listings pending.</p><% } %>
+                <% pendingJobs.forEach(job => { %>
+                    <div class="pipeline-item">
+                        <div class="pipeline-flex-wrapper">
+                            <div class="pipeline-content-col">
+                                <strong><%= job.title %></strong> <span class="student-meta-text">by <%= job.name %></span>
+                                <p class="pipeline-item-text"><%= job.description %></p>
+                                
+                                <% if (job.image_url) { %>
+                                    <div class="image-attach-wrapper">
+                                        <small class="image-attach-label">Vacancy Banner Image:</small>
+                                        <img src="/uploads/<%= job.image_url %>" class="admin-post-preview-img" onclick="window.open(this.src)">
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="pipeline-actions-col">
+                                <form action="/admin/job/<%= job.id %>/approve" method="POST" class="inline-form"><button class="btn-approve">✓ Approve</button></form>
+                                <form action="/admin/job/<%= job.id %>/reject" method="POST" class="inline-form"><button class="btn-reject">✕ Reject</button></form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+            <div class="section-box">
+                <h2 class="section-title-dark">📝 Live Feed Modifications Hub (Students Posts)</h2>
+                <% activePosts.forEach(post => { %>
+                    <div class="live-feed-item">
+                        <div class="live-feed-row">
+                            <div>
+                                <b><%= post.title %></b> <span class="student-meta-text">(Student: <%= post.student_name %>)</span>
+                            </div>
+                            <div>
+                                <button class="btn-secondary" onclick="toggleEditForm('post-edit-<%= post.id %>')">✏️ Edit Content</button>
+                                <form action="/admin/post/<%= post.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Confirm delete post?');">
+                                    <button class="btn-danger">🗑️ Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="post-edit-<%= post.id %>" class="edit-inline-box" style="display: none;">
+                            <form action="/admin/post/<%= post.id %>/edit" method="POST">
+                                <label>Title:</label><br>
+                                <input type="text" name="title" value="<%= post.title %>" class="form-input-field" required><br>
+                                <label>Content Text:</label><br>
+                                <textarea name="content" rows="3" class="form-input-field" required><%= post.content %></textarea><br>
+                                <button class="btn-approve" type="submit">Save Updates</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        
+            <div class="section-box">
+                <h2 class="section-title-dark">📝 Live Feed Modifications Hub (Company & Internship Posts)</h2>
+                <% if (typeof activeJobs !== 'undefined' && activeJobs.length === 0) { %>
+                    <p class="text-empty-state">No active corporate vacancies listed.</p>
+                <% } else if (typeof activeJobs !== 'undefined') { %>
+                    <% activeJobs.forEach(job => { %>
+                        <div class="live-feed-item">
+                            <div class="live-feed-row">
+                                <div>
+                                    <b><%= job.title %></b> <span class="student-meta-text">(Company: <%= job.name || job.company_name %>)</span>
+                                </div>
+                                <div>
+                                    <button class="btn-secondary" onclick="toggleEditForm('job-edit-<%= job.id %>')">✏️ Edit Content</button>
+                                    <form action="/admin/job/<%= job.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Confirm delete vacancy post?');">
+                                        <button class="btn-danger">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="job-edit-<%= job.id %>" class="edit-inline-box" style="display: none;">
+                                <!-- ✅ FIXED FORM ACTION PATH -->
+<form action="/admin/job/modify/<%= job.id %>" method="POST">
+    <label>Job Title:</label><br>
+    <input type="text" name="title" value="<%= job.title %>" class="form-input-field" required><br>
+    <label>Description / Requirements:</label><br>
+    <textarea name="description" rows="3" class="form-input-field" required><%= job.description %></textarea><br>
+    <button class="btn-approve" type="submit">Save Updates</button>
+</form>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div> <!-- ✅ CRITICAL FIX: This closes #post-sec container before section 4 starts -->
+        
+       <!-- ========================================================
+     ✅ FIXED: admin.ejs ထဲက စလုံးပေါင်းမှားနေသော variable အား ပြင်ဆင်ခြင်း
+     ======================================================== -->
+<!-- SECTION 4: PLACEMENTS -->
+<div id="placement-sec" class="dashboard-section">
+    <div class="section-box">
+        <h2 class="section-title-gold">🎓 Hired Undergraduates Status Roster</h2>
+        <% if (successPlacements.length === 0) { %> <!-- ပြင်ဆင်ပြီး (successPlacements) -->
+            <p class="text-empty-state">No employment conversions tracked yet.</p>
+        <% } else { %>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Placed Student Name</th>
+                            <th>Assigned Job Assignment</th>
+                            <th>Recruiting Organization</th>
+                            <th>Contract Finalized Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% successPlacements.forEach(placement => { %> <!-- ပြင်ဆင်ပြီး (successPlacements) -->
+                            <tr>
+                                <td>
+                                    <b>👤 <%= placement.student_name %></b><br>
+                                    <span class="student-meta-text"><%= placement.student_email %></span>
+                                </td>
+                                <td style="font-weight: 600; color: #2563eb;">💼 <%= placement.job_title %></td>
+                                <td>🏢 <%= placement.company_name %></td>
+                                <td class="student-meta-text"><%= new Date(placement.applied_at).toLocaleDateString() %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div> <!-- Closes #placement-sec -->
+       <!-- SECTION 5: CONTACT USER MESSAGES -->
+        <div id="message-sec" class="dashboard-section">
+            <div class="section-box">
+                <h2 class="section-title-dark">📬 Inbound User Correspondence Help-Desk</h2>
+                <div class="message-stack">
+                    <% messages.forEach(m => { %>
+                        <div class="message-card">
+                            <div class="message-meta">From: <b><%= m.name %></b> (<%= m.email %>)</div>
+                            <p class="message-body"><%= m.message %></p>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div> <!-- Closes #message-sec -->
+    </div> <!-- Closes .admin-main-content -->
+</div> <!-- Closes .admin-container -->
+<script>
+    function switchTab(evt, sectionId) {
+        const sections = document.getElementsByClassName("dashboard-section");
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].classList.remove("active-section");
+        }
+        const tabBtns = document.getElementsByClassName("nav-tab-btn");
+        for (let i = 0; i < tabBtns.length; i++) {
+            tabBtns[i].classList.remove("active");
+        }
+        document.getElementById(sectionId).classList.add("active-section");
+        evt.currentTarget.classList.add("active");
+    }
+    function toggleEditForm(id) {
+        const box = document.getElementById(id);
+        box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
+    }
+</script>
+</body>
+</html>

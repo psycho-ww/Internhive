@@ -1,0 +1,358 @@
+<%- include('partials/header') %>
+<style>
+    :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Safeguards against horizontal viewport overflow on mobile screens */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+    /* Main Layout Container */
+    .profile-container {
+        max-width: 1000px;
+        width: 100%;
+        margin: clamp(15px, 4vw, 30px) auto;
+        padding: 0 clamp(10px, 3vw, 15px);
+        font-family: 'Segoe UI', sans-serif;
+        color: #1e293b;
+        box-sizing: border-box;
+    }
+    /* Card Wrapper (Header & Information) */
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+        position: relative;
+    }
+    /* Cover Photo Banner */
+    .cover-banner {
+        height: clamp(200px, 35vw, 400px);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    /* Profile Avatar & Header Info */
+    .profile-header {
+        padding: clamp(15px, 3vw, 20px) clamp(15px, 3vw, 30px);
+        background: #b8f1f8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: 0; 
+        position: relative;
+        z-index: 5;
+        border-bottom: 1px solid #f1f5f9;
+        box-sizing: border-box;
+    }
+    .avatar-wrapper {
+        width: clamp(100px, 15vw, 130px);
+        height: clamp(100px, 15vw, 130px);
+        background: #b8f1f8;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -85px; 
+        position: relative;
+        z-index: 10;
+        flex-shrink: 0;
+    }
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .avatar-emoji {
+        font-size: 50px;
+    }
+    .user-name {
+        margin: 10px 0 5px 0;
+        font-size: clamp(1.4rem, 3vw, 28px);
+        font-weight: 700;
+        color: #0f172a;
+        word-break: break-word;
+    }
+    .user-location {
+        margin: 0 0 10px 0;
+        color: #f5750d;
+        font-size: 15px;
+        word-break: break-word;
+    }
+    .user-role-badge {
+        margin: 0 0 5px 0;
+        color: #7c3aed;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+    .join-date {
+        color: #062d64;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    /* Detailed Information block */
+    .info-block {
+        padding: clamp(20px, 4vw, 30px);
+        background: #b8f1f8;
+        box-sizing: border-box;
+    }
+    .info-title {
+        margin-top: 0;
+        color: #0f172a;
+        font-size: 18px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+    }
+    .info-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 15px;
+        color: #000000;
+        font-weight: 600;
+        word-break: break-word;
+    }
+    .info-grid > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .info-label {
+        color: #475569;
+        font-weight: normal;
+        display: inline-block;
+        width: 150px;
+        flex-shrink: 0;
+    }
+    .website-link {
+        color: #1e40af;
+        text-decoration: underline;
+        word-break: break-all;
+    }
+    /* Publications / Posts Section */
+    .publications-section {
+        background: white;
+        padding: clamp(15px, 3vw, 25px);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        border: 1px solid #e2e8f0;
+        box-sizing: border-box;
+    }
+    .section-title {
+        margin-top: 0;
+        color: #1e293b;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        word-break: break-word;
+    }
+    .no-posts-msg {
+        color: #64748b;
+        font-style: italic;
+        text-align: center;
+        padding: 30px 0;
+    }
+    .post-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: clamp(15px, 3vw, 20px);
+        margin-bottom: 20px;
+        background: #ffffff;
+        box-sizing: border-box;
+    }
+    .post-author-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .author-avatar {
+        margin-right: 0;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #cbd5e1;
+        flex-shrink: 0;
+    }
+    .author-name {
+        font-size: 15px;
+        color: #1e3a8a;
+        word-break: break-word;
+    }
+    .post-date {
+        color: #64748b;
+        white-space: nowrap;
+    }
+    .post-title {
+        margin-top: 0;
+        margin-bottom: 4px;
+        color: #1e3a8a;
+        font-size: clamp(1.1rem, 2vw, 18px);
+        font-weight: 700;
+        word-break: break-word;
+    }
+    .post-body {
+        color: #222222;
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        margin-bottom: 15px;
+        word-break: break-word;
+    }
+    .post-image-wrapper {
+        margin-top: 10px;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        max-height: 350px;
+        display: flex;
+        justify-content: center;
+    }
+    .post-img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        max-height: 350px;
+        display: block;
+    }
+
+    /* 📱 Responsive Media Queries for Mobile Screens */
+    @media (max-width: 576px) {
+        .info-label {
+            width: 100%;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="profile-container">
+    
+    <div class="profile-card">
+        
+        <div class="cover-banner" style="background-image: <%= targetUser.cover_pic ? 'url(/uploads/' + targetUser.cover_pic + ')' : 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)' %>;">
+        </div>
+        <div class="profile-header">
+            
+            <div class="avatar-wrapper">
+                <% if (targetUser.profile_pic) { %>
+                    <img src="/uploads/<%= targetUser.profile_pic %>" class="avatar-img">
+                <% } else { %>
+                    <span class="avatar-emoji"><%= targetUser.role === 1 ? '🎓' : '💼' %></span>
+                <% } %>
+            </div>
+            <h1 class="user-name"><%= targetUser.name %></h1>
+            <p class="user-location">📍 <%= targetUser.location || 'No location set' %></p>
+            <p class="user-role-badge">
+                <%= targetUser.role === 1 ? '🎓 Student Professional' : '🏢 Corporate Employer' %>
+            </p>
+            <small class="join-date">
+                📅 Joined on: <%= new Date(targetUser.created_at).toDateString() %>
+            </small>
+        </div>
+        <div class="info-block">
+            <h3 class="info-title">ℹ️ Profile Information</h3>
+            <div class="info-grid">
+                <div><span class="info-label">Email Address:</span> <%= targetUser.email %></div>
+                <div><span class="info-label">Location:</span> <%= targetUser.location || 'Not Specified' %></div>
+                
+                <% if (targetUser.role === 1) { %>
+                    <div><span class="info-label">University:</span> <%= targetUser.uni || 'Not Specified' %></div>
+                    <div><span class="info-label">Major Subject:</span> <%= targetUser.major || 'Not Specified' %></div>
+                    <div><span class="info-label">Academic Year:</span> <%= targetUser.year || 'Not Specified' %></div>
+                    <% if (targetUser.role === 1) { %>
+    <div>
+        <span class="info-label">Student's CV:</span>
+        <% if (canViewCV) { %>
+            <% if (targetUser.cv_file) { %>
+                <a href="/uploads/<%= targetUser.cv_file %>" target="_blank" class="btn-post-project" style="text-decoration: none; display: inline-block; padding: 5px 10px; font-size: 13px;">📄 View Applicant's CV</a>
+            <% } else { %>
+                <span style="color: #64748b; font-style: italic;">Student hasn't uploaded a CV yet.</span>
+            <% } %>
+        <% } else { %>
+            <span style="color: #94a3b8; font-style: italic;">🔒 Hidden</span>
+        <% } %>
+    </div>
+<% } %>
+                    
+                <% } else if (targetUser.role === 2) { %>
+                    <div><span class="info-label">Industry / Sector:</span> <%= targetUser.industry || 'Not Specified' %></div>
+                    <div><span class="info-label">Company Size:</span> <%= targetUser.company_size || 'Not Specified' %></div>
+                    <div><span class="info-label">Type of Ownership:</span> <%= targetUser.ownership_type || 'Not Specified' %></div>
+                    <div>
+                        <span class="info-label">Website URL:</span> 
+                        <% if (targetUser.website_url) { %>
+                            <a href="<%= targetUser.website_url %>" target="_blank" class="website-link"><%= targetUser.website_url %></a>
+                        <% } else { %>
+                            Not Specified
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="publications-section">
+        <h3 class="section-title">
+            <%= targetUser.role === 1 ? '📌 Project Showcases Published' : '💼 Job Positions Posted' %> (<%= posts ? posts.length : 0 %>)
+        </h3>
+        
+        <% if (!posts || posts.length === 0) { %>
+            <p class="no-posts-msg">No active publications found from this profile.</p>
+        <% } else { %>
+            <% posts.forEach(p => { %>
+                <div class="post-card">
+                    <div class="post-author-meta">
+                        <img src="/uploads/<%= targetUser.profile_pic || 'default-avatar.png' %>" class="author-avatar">
+                        <div>
+                            <strong class="author-name"><%= targetUser.name %></strong><br>
+                            <small class="post-date"><%= new Date(p.created_at).toDateString() %></small>
+                        </div>
+                    </div>
+                    
+                    <h4 class="post-title"><%= p.title %></h4>
+                    <p class="post-body"><%= p.content || p.description %></p>
+                    
+                    <% if (p.image_url) { %>
+                        <div class="post-image-wrapper">
+                            <img src="/uploads/<%= p.image_url %>" class="post-img">
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+</body>
+</html>

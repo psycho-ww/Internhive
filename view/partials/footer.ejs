@@ -1,0 +1,177 @@
+<!-- footer.ejs -->
+<style>
+    footer {
+        width: 100%;
+        color: white;
+        background: linear-gradient(135deg, #acb1e9, #e6c9ef, #f8dee7);
+        padding: 50px 80px 20px;
+        box-sizing: border-box;
+    }
+
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 40px;
+    }
+
+    .footer-left {
+        width: 300px;
+        max-width: 100%; /* FIX: Prevents overflow on screens narrower than 300px */
+    }
+
+    .footer-left img {
+        width: 80px;
+        margin-bottom: 15px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .footer-left p {
+        line-height: 1.5;
+        font-size: 14px;
+        color:black;
+    }
+
+    .footer-links h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        color: black;
+    }
+
+    .footer-links ul {
+        list-style: none;
+        font-size: 18px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-links ul li {
+        margin: 10px 0;
+        cursor: pointer;
+        opacity: 0.9;
+    }
+
+    .footer-links ul li a {
+        color: rgb(13, 8, 8);
+        text-decoration: none;
+    }
+
+    .footer-links ul li:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+
+    .footer-social h3 {
+        margin-bottom: 15px;
+        color: black;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .social-icons a {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 50%;
+        color: rgb(33, 60, 235);
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    /* Target the SVG inside the link to handle sizing and color */
+    .social-icons a svg {
+        width: 26px;
+        height: 26px;
+        fill: currentColor; /* Inherits the blue color from the 'a' tag */
+    }
+
+    .social-icons a:hover {
+        transform: scale(1.1);
+    }
+
+    footer hr {
+        margin: 30px 0 15px;
+        border: 0;
+        border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .footer-bottom {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 500;
+        color:black;
+        opacity: 0.9;
+    }
+
+    @media(max-width: 768px){
+        footer {
+            padding: 40px 20px; /* FIX: Slight reduction in padding on small screens to give content more breathing room */
+        }
+
+        .footer-container {
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            gap: 30px; /* FIX: Tighter spacing for a cleaner stacked look */
+        }
+
+        /* FIX: Ensures the container behaves responsively when centered */
+        .footer-left {
+            width: 100%; 
+        }
+
+        .social-icons {
+            justify-content: center;
+        }
+    }
+</style>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-left">
+            <p>
+                Helping students and professionals discover internships, jobs,
+                and career opportunities in technology.
+            </p>
+        </div>
+        <div class="footer-links">
+            <h3>Info</h3>
+            <ul>
+                <li><a href="/explore">Explore</a></li>
+                <li><a href="/about_us">About Us</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+                
+            </ul>
+        </div>
+        <div class="footer-social">
+            <h3>Where are we?</h3>
+            <div class="social-icons">
+                <!-- Facebook SVG -->
+                <a href="#" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.8z"/></svg>
+                </a>
+                <!-- TikTok SVG -->
+                <a href="#" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.01 1.62 4.2 1.01.88 2.27 1.39 3.59 1.49v3.12c-1.17-.07-2.31-.47-3.27-1.13-.38-.25-.73-.55-1.04-.88v5.75c.02 2.23-.91 4.37-2.54 5.9-1.87 1.83-4.52 2.61-7.07 2.07-2.91-.53-5.31-2.84-5.91-5.74-.71-3.18.91-6.51 3.91-7.79 1.28-.53 2.69-.59 4-.18v3.18c-.89-.35-1.89-.25-2.7.27-.97.56-1.54 1.62-1.48 2.74.07 1.48 1.22 2.73 2.7 2.85 1.53.18 3.01-.84 3.32-2.34.08-.34.1-.7.1-1.05V.02z"/></svg>
+                </a>
+                <!-- Telegram SVG -->
+                <a href="#" aria-label="Telegram">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-1-.65-.35-1 .22-1.62.15-.15 2.7-2.46 2.75-2.67.01-.03.01-.13-.05-.18-.06-.05-.14-.03-.2-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="footer-bottom">
+        Copyright © Internhive <%= new Date().getFullYear() %>
+    </div>
+</footer>

@@ -1,0 +1,546 @@
+<%- include('partials/header') %>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Embedded Offline Styles -->
+<style>
+    /* Base Reset & Variables matching InternHive Theme */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    :root {
+        --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+        --gemini-bg: linear-gradient(120deg, #f8fafc 0%, #e2e8f0 40%, #fae8ff 70%, #eff6ff 100%);
+        --glam-glow: 0 8px 32px 0 rgba(147, 51, 234, 0.2);
+        --glass-blur: blur(20px);
+        --text-dark: #0f172a;
+        --text-light: #475569;
+        --bg-glass: rgba(255, 255, 255, 0.85);
+        --bg-white: #ffffff;
+        --bg-light: #f8fafc;
+        --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8fafc;
+        color: #1e293b;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+    .gemini-bg {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+        background-size: 400% 400%;
+        animation: geminiGradient 15s ease infinite;
+    }
+    @keyframes geminiGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        max-width: 800px;
+        margin: 2rem auto 3rem auto;
+        padding: 0 1.25rem; /* Added responsive padding for small screens */
+    }
+    .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #d946ef;
+        background: rgba(217, 70, 239, 0.1);
+        border: 1px solid rgba(217, 70, 239, 0.3);
+        padding: 0.4rem 1.2rem;
+        border-radius: 9999px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+    .hero h1 {
+        font-size: clamp(2rem, 5vw, 2.5rem); /* Fluid typography for phones/tablets/laptops */
+        font-weight: 800;
+        background: linear-gradient(135deg, #d946ef 0%, #6366f1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+    .hero p {
+        color: #64748b;
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .tag-pill {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 0.4rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        color: #475569;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        font-weight: 500;
+    }
+    /* Features Grid Section */
+    .features-section {
+        max-width: 1000px;
+        margin: 0 auto 4rem auto;
+        padding: 0 1.25rem; /* Added responsive padding */
+    }
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjusted minmax for better phone scaling */
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .feature-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #c084fc;
+    }
+    .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+    .feature-desc {
+        font-size: 0.875rem;
+        color: #64748b;
+        line-height: 1.5;
+    }
+    /* Floating Card Animation */
+    @keyframes floatCard {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-8px) rotate(0.5deg); }
+    }
+    .float-1 { animation: floatCard 5s ease-in-out infinite; }
+    .float-2 { animation: floatCard 6s ease-in-out 1s infinite; }
+    .float-3 { animation: floatCard 4.5s ease-in-out 0.5s infinite; }
+    /* Photo Motion Effect */
+    @keyframes photoPan {
+        0% { transform: scale(1) translate(0, 0); }
+        50% { transform: scale(1.08) translate(-1%, -1%); }
+        100% { transform: scale(1) translate(0, 0); }
+    }
+    .moving-photo {
+        animation: photoPan 8s ease-in-out infinite alternate;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        display: block;
+    }
+    /* Team Pyramid Section */
+    .team-section {
+        max-width: 1000px;
+        margin: 0 auto 4rem auto;
+        padding: 0 1.25rem;
+    }
+    .section-title {
+        text-align: center;
+        font-size: clamp(1.5rem, 4vw, 1.8rem);
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+    .section-subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 2.5rem;
+    }
+    /* Pyramid Container Layout (2 Top, 3 Bottom) */
+    .pyramid-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center;
+    }
+    .pyramid-row {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        width: 240px;
+        max-width: 100%; /* Ensures it never overflows on small phone displays */
+    }
+    .card:hover {
+        border-color: #d946ef;
+        box-shadow: 0 12px 28px -5px rgba(217, 70, 239, 0.25);
+    }
+    /* Real Aspect Ratio Portrait Photo Frame */
+    .photo-frame {
+        width: 100%;
+        height: 240px; /* Real photo proportions */
+        border-radius: 0.75rem;
+        padding: 3px;
+        background: linear-gradient(135deg, #d946ef, #6366f1);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        position: relative;
+    }
+    .photo-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 0.6rem;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+    .card-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+    }
+    .card-role {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+    }
+    .card-btn {
+        margin-top: auto;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #d946ef;
+    }
+    /* Roadmap / Timeline Section */
+    .roadmap-section {
+        max-width: 900px;
+        margin: 0 auto 4rem auto;
+        padding: 0 1.25rem; /* Added responsive padding */
+    }
+    .timeline {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .timeline-step {
+        background: #ffffff;
+        border-left: 4px solid #d946ef;
+        padding: 1.2rem;
+        border-radius: 0.5rem 1rem 1rem 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .step-number {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #d946ef;
+        text-transform: uppercase;
+    }
+    .step-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0.25rem 0;
+    }
+    .step-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        line-height: 1.4;
+    }
+    /* FAQ Section Accordion */
+    .faq-section {
+        max-width: 800px;
+        margin: 0 auto 2rem auto;
+        padding: 0 1.25rem; /* Added responsive padding */
+    }
+    .faq-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        margin-bottom: 0.75rem;
+        overflow: hidden;
+    }
+    .faq-question {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        text-align: left;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        padding: 0 1.25rem;
+    }
+    .faq-item.active .faq-answer {
+        max-height: 200px;
+        padding: 1rem 1.25rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    /* FIX: Modal Popup Styles */
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem; /* Adjusted for smaller mobile views */
+        z-index: 999999; /* Higher than fixed navbar */
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .modal-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .modal-content {
+        background: #ffffff;
+        border-radius: 1.25rem;
+        max-width: 420px;
+        width: 100%;
+        max-height: 85vh; /* Prevents card from going off-screen */
+        overflow-y: auto; /* Adds scrollbar if needed on smaller screens */
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+        position: relative;
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .modal-backdrop.active .modal-content {
+        transform: scale(1);
+    }
+    .modal-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: #f1f5f9;
+        border: none;
+        color: #64748b;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+        z-index: 10;
+    }
+    .modal-close:hover {
+        color: #0f172a;
+        background: #e2e8f0;
+    }
+    .modal-photo-frame {
+        width: 160px;
+        height: 200px; /* Properly scaled height to fit inside the modal */
+        margin: 0 auto 1rem auto;
+        border-radius: 0.75rem;
+        padding: 3px;
+        background: linear-gradient(135deg, #d946ef, #6366f1);
+        overflow: hidden;
+    }
+    .modal-bio {
+        text-align: left;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        color: #334155;
+        line-height: 1.5;
+        margin: 1rem 0 1.25rem 0;
+        border: 1px solid #e2e8f0;
+    }
+    .modal-btn {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: linear-gradient(135deg, #d946ef, #6366f1);
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    /* Responsive Breakpoints optimized for Phone, Tablet, & Laptop */
+    @media (max-width: 768px) {
+        .pyramid-row { 
+            gap: 1rem; 
+        }
+        .card { 
+            width: 100%; 
+            max-width: 320px; 
+        }
+    }
+    @media (max-width: 640px) {
+        .hero {
+            margin: 1.5rem auto 2rem auto;
+        }
+        .pyramid-row { 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .card { 
+            width: 100%; 
+            max-width: 280px; 
+        }
+        .timeline { 
+            grid-template-columns: repeat(1, 1fr); 
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<main>
+    <!-- Hero Section -->
+    <section class="hero">
+        <span class="badge">CEIT Second Year Project</span>
+        <h1>InternHive Portal</h1>
+        <p>
+            A platform created by <b>CEIT (Second Year)</b> students to help students find internship opportunities more easily and quickly.
+        </p>
+        <div class="tags">
+            <span class="tag-pill">🚀 Skill-Based Internships</span>
+            <span class="tag-pill">🤖 Chatbot Integration (Coming Soon)</span>
+            <span class="tag-pill">🌐 Real-World Platform Ready</span>
+        </div>
+    </section>
+    <!-- Key Features Section -->
+    <section class="features-section">
+        <h2 class="section-title">Platform Features</h2>
+        <p class="section-subtitle">Key features designed to empower students</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-title">Smart Search</div>
+                <div class="feature-desc">Easily search for internships based on your specific skills or industry preferences.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Direct Application</div>
+                <div class="feature-desc">Apply directly to company internship positions all from a single place.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI Assistant (Future)</div>
+                <div class="feature-desc">An automated Q&A chatbot system will be integrated in upcoming releases.</div>
+            </div>
+        </div>
+    </section>
+    <!-- Pyramid Team Section -->
+    <section class="team-section">
+        <h2 class="section-title">Meet The Creators</h2>
+        <p class="section-subtitle">Click on any team member's card to view details.</p>
+        
+        <% 
+            const topRow = [
+                { id: 1, name: "ရှင်းမွန်သန့်(Leader)", role: "CEIT - 2nd Year", image: "/images/shin-mon-thant.jpg", floatClass: "float-1", bio: "Passionate about Web Development and UI Design; developed core features of the Internship Portal." },
+                { id: 2, name: "ချိုချိုဇင်", role: "CEIT - 2nd Year", image: "/images/cho-cho-zin.jpg", floatClass: "float-2", bio: "Led the Frontend Architecture and User Experience design of the platform." }
+            ];
+            const bottomRow = [
+                { id: 3, name: "ဇင်ဝေမိုး", role: "CEIT - 2nd Year", image: "/images/zin-wai-moe.jpg", floatClass: "float-3", bio: "My role in this project is to manage the backend development and handle process logic." },
+                { id: 4, name: "ထက်ပီတိလင်း", role: "CEIT - 2nd Year", image: "/images/piti.jpg", floatClass: "float-1", bio: "I built the structure of the database for this project and I am currnently developing the System Flow and future Chatbot Integration." },
+                { id: 5, name: "ထက်ထက်အောင်", role: "CEIT - 2nd Year", image: "/images/htet-htet-aung.jpg", floatClass: "float-2", bio: "Developed the Contact Us front end and curated company internship listings to enrich platform content." }
+            ];
+        %>
+        <div class="pyramid-container">
+            <!-- Top Layer -->
+            <div class="pyramid-row">
+                <% topRow.forEach(member => { %>
+                    <div class="card <%= member.floatClass %>" onclick="openModal('<%= member.name %>', '<%= member.role %>', '<%= member.image %>', '<%= member.bio %>')">
+                        <div class="photo-frame">
+                            <div class="photo-inner">
+                                <img 
+                                    src="<%= member.image %>" 
+                                    alt="<%= member.name %>" 
+                                    class="moving-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d946ef\' stroke-width=\'1.5\'><path d=\'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg>'"
+                                />
+                            </div>
+                        </div>
+                        <div class="card-name"><%= member.name %></div>
+                        <div class="card-role"><%= member.role %></div>
+                        <div class="card-btn">Click to View →</div>
+                    </div>
+                <% }); %>
+            </div>
+            <!-- Bottom Layer -->
+            <div class="pyramid-row">
+                <% bottomRow.forEach(member => { %>
+                    <div class="card <%= member.floatClass %>" onclick="openModal('<%= member.name %>', '<%= member.role %>', '<%= member.image %>', '<%= member.bio %>')">
+                        <div class="photo-frame">
+                            <div class="photo-inner">
+                                <img 
+                                    src="<%= member.image %>" 
+                                    alt="<%= member.name %>" 
+                                    class="moving-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d946ef\' stroke-width=\'1.5\'><path d=\'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\'/><circle cx=\'12\' cy=\'7\' r=\'4\'/></svg>'"
+                                />
+                            </div>
+                        </div>
+                        <div class="card-name"><%= member.name %></div>
+                        <div class="card-role"><%= member.role %></div>
+                        <div class="card-btn">Click to View →</div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <!-- Project Roadmap Section -->
+    <section class="roadmap-section">
+        <h2 class="section-title">Project Roadmap</h2>
+        <p class="section-subtitle">Long-term development phases of InternHive</p>
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="step-number">Phase 1</div>
+                <div class="step-title">Second Year Mini Project</div>
+                <div class="step-desc

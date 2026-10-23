@@ -1,0 +1,234 @@
+<%- include('partials/header') %>
+<style>
+    /* Queue Container Card */
+    .queue-container {
+        background: white; 
+        padding: clamp(12px, 3vw, 20px); 
+        border-radius: 8px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        margin: 20px auto;
+        max-width: 1200px;
+        overflow-x: hidden;
+    }
+    .queue-title {
+        margin-top: 0; 
+        margin-bottom: 20px; 
+        color: #1e293b;
+        font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    }
+    .empty-queue-text {
+        color: #64748b; 
+        font-style: italic;
+    }
+    /* Table Responsive Wrapper & Base Styles */
+    .table-responsive-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 1rem;
+    }
+    .queue-table {
+        width: 100%; 
+        min-width: 750px; /* Protects layout structure from breaking on narrow screens */
+        border-collapse: collapse; 
+        text-align: left;
+    }
+    .queue-table thead tr {
+        border-bottom: 2px solid #e2e8f0; 
+        color: #475569;
+    }
+    .queue-table th, 
+    .queue-table td {
+        padding: 12px 10px;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+    .queue-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+    }
+    /* Table Typography & Elements */
+    .applicant-link {
+        color: #2563eb; 
+        font-weight: 600; 
+        text-decoration: none;
+        word-break: break-word;
+    }
+    .applicant-link:hover {
+        text-decoration: underline;
+    }
+    .position-text {
+        font-weight: 500;
+    }
+    /* Status Badges */
+    .badge {
+        padding: 4px 8px; 
+        border-radius: 12px; 
+        font-size: 12px; 
+        font-weight: 500;
+        text-transform: capitalize;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .badge-applied { background: #fef3c7; color: #d97706; }
+    .badge-shortlisted { background: #dbeafe; color: #1e40af; }
+    .badge-scheduled { background: #f3e8ff; color: #6b21a8; }
+    .badge-accepted { background: #dcfce7; color: #15803d; }
+    .badge-rejected { background: #fee2e2; color: #b91c1c; }
+    
+    .status-processed {
+        color: #94a3b8; 
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    /* CV View Button Styling */
+    .btn-cv-view {
+        background: #2563eb; 
+        color: white; 
+        padding: 6px 12px; 
+        border-radius: 4px; 
+        text-decoration: none; 
+        font-size: 12px; 
+        font-weight: bold; 
+        display: inline-block;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+    .btn-cv-view:hover {
+        background: #1d4ed8;
+    }
+    .no-cv-text {
+        color: #94a3b8; 
+        font-style: italic; 
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    /* Action Forms & Buttons */
+    .action-group {
+        display: flex; 
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap; /* Allows elements to wrap gracefully on smaller widths */
+    }
+    .form-inline {
+        display: inline-block;
+        margin: 2px 0;
+    }
+    .note-input {
+        padding: 6px; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 4px; 
+        font-size: 12px;
+        margin-bottom: 4px;
+        width: 100%;
+        max-width: 180px;
+        box-sizing: border-box;
+    }
+    .btn-action {
+        border: none; 
+        padding: 6px 12px; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        font-size: 12px; 
+        color: white;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .btn-accept { background: #10b981; }
+    .btn-reject { background: #ef4444; }
+
+    /* 📱 Responsive Media Query Additions for Phone & Tablet Views */
+    @media (max-width: 768px) {
+        .queue-container {
+            padding: 10px;
+            margin: 10px;
+        }
+        .note-input {
+            max-width: 100%;
+        }
+    }
+</style>
+<div class="queue-container">
+    <h3 class="queue-title">📬 Incoming Applications Queue</h3>
+    
+    <% if (apps.length === 0) { %>
+        <p class="empty-queue-text">No applications received yet.</p>
+    <% } else { %>
+        <div class="table-responsive-wrapper">
+            <table class="queue-table">
+                <thead>
+                    <tr>
+                        <th>Applicant Student</th>
+                        <th>Education Info</th>
+                        <th>Applied Position</th>
+                        <th>Applied Date</th>
+                        <th>Current Status</th>
+                        <th>Curriculum Vitae</th>
+                        <th>Pipeline Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% apps.forEach(app => { %>
+                        <tr>
+                            <td>
+                                <a href="/user/profile/<%= app.student_id %>" target="_blank" class="applicant-link" title="Click to view info, CV & projects">
+                                    👤 <%= app.student_name %> ↗
+                                </a>
+                            </td>
+                            <td><%= app.uni %> (<%= app.major %>, <%= app.year %> Year)</td>
+                            <td class="position-text"><%= app.title %></td>
+                            <td><%= new Date(app.applied_at).toLocaleDateString() %></td>
+                            <td>
+                                <span class="badge badge-<%= app.status %>">
+                                    <%= app.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if (app.student_cv || app.cv_file) { %>
+                                    <a href="/uploads/<%= app.student_cv || app.cv_file %>" target="_blank" class="btn-cv-view">
+                                        📄 View CV (PDF)
+                                    </a>
+                                <% } else { %>
+                                    <span class="no-cv-text">No CV Attached</span>
+                                <% } %>
+                            </td>
+                            <td>
+        <% if (app.status === 'applied') { %>
+            <!-- အဆင့် ၁: Shortlist သို့မဟုတ် တိုက်ရိုက် Reject လုပ်ရန် -->
+            <div class="action-group">
+                <form action="/company/application/<%= app.id %>/shortlist" method="POST" class="form-inline">
+                    <button type="submit" class="btn-action" style="background: #3b82f6;">Shortlist Profile</button>
+                </form>
+                <form action="/company/application/<%= app.id %>/reject" method="POST" class="form-inline">
+                    <button type="submit" class="btn-action btn-reject">Reject</button>
+                </form>
+            </div>
+        <% } else if (app.status === 'shortlisted') { %>
+            <!-- အဆင့် ၂: Interview စီစဉ်ရန် -->
+            <form action="/company/application/<%= app.id %>/schedule" method="POST" class="form-inline" style="display: flex; flex-direction: column;">
+                <input type="datetime-local" name="interview_date" required class="note-input" title="Interview Date">
+                <input type="url" name="interview_link" placeholder="Zoom/Google Meet Link" required class="note-input">
+                <button type="submit" class="btn-action" style="background: #a855f7; width: 100%; max-width: 180px;">Schedule Interview</button>
+            </form>
+        <% } else if (app.status === 'scheduled') { %>
+            <!-- အဆင့် ၃: Final Accept/Reject ဆုံးဖြတ်ရန် -->
+            <div class="action-group">
+                <form action="/company/application/<%= app.id %>/accept" method="POST" class="form-inline">
+                    <input type="text" name="company_message" placeholder="Offer note/Congratulation..." required class="note-input" style="width: 100%; max-width: 140px;">
+                    <button type="submit" class="btn-action btn-accept">Accept</button>
+                </form>
+                <form action="/company/application/<%= app.id %>/reject" method="POST" class="form-inline">
+                    <button type="submit" class="btn-action btn-reject">Reject</button>
+                </form>
+            </div>
+        <% } else { %>
+            <span class="status-processed">Decision Finalized</span>
+        <% } %>
+    </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
+<%- include('partials/footer') %>

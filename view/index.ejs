@@ -1,0 +1,344 @@
+<%- include('partials/header') %>
+<style>
+    :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Safeguards against horizontal viewport overflow on mobile screens */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+    /* Description ကို စာကြောင်းအနည်းငယ်ပဲ ပြရန် (ဥပမာ - ၃ လိုင်း) */
+    .truncated-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* ပြချင်တဲ့ စာကြောင်း အရေအတွက် */
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+    /* See More / See Less ခလုတ်ပုံစံ */
+    .see-more-btn {
+        background: none;
+        border: none;
+        color: #9929ef; /* မင်းရဲ့ theme ကာလာအတိုင်း */
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0;
+        margin-top: 5px;
+        font-size: 14px;
+        align-self: flex-start;
+    }
+    .see-more-btn:hover {
+        text-decoration: underline;
+    }
+
+    /* Container Fluid Layout */
+    .container {
+        max-width: 1140px;
+        width: 100%;
+        margin: 20px auto;
+        padding: 0 clamp(10px, 3vw, 20px);
+        box-sizing: border-box;
+    }
+
+    /* Search Layout & Form Card */
+    .search-section-card {
+        margin-bottom: 25px;
+        padding: clamp(15px, 3vw, 20px);
+        box-sizing: border-box;
+    }
+    .search-flex-form {
+        display: flex; 
+        gap: 10px;
+        flex-wrap: wrap; /* Allows input and button to wrap cleanly on narrow mobile screens */
+    }
+    .search-text-input {
+        flex: 1; 
+        min-width: 200px;
+        padding: 10px; 
+        border: 1px solid #c4c4ca; 
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+    .search-text-input:focus {
+        outline: none; 
+        border-color: #9929ef; 
+        box-shadow: 0 0 5px rgba(32, 36, 249, 0.5);
+    }
+    .search-submit-btn {
+        padding: 10px 20px;
+        background: #9929ef;
+        color: white;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    /* Recent Search History Tags */
+    .history-meta-row {
+        margin-top: 12px; 
+        font-size: 14px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+    .history-tags-flex {
+        display: flex; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+    .history-label-txt {
+        color: #666;
+    }
+    .history-keyword-badge {
+        background: #e2e8f0; 
+        padding: 4px 10px; 
+        border-radius: 15px; 
+        text-decoration: none; 
+        color: #333; 
+        font-size: 13px;
+    }
+    .clear-history-form {
+        margin: 0;
+    }
+    .clear-history-btn {
+        background: none; 
+        border: none; 
+        color: #ef4444; 
+        cursor: pointer; 
+        font-size: 13px; 
+        font-weight: 600;
+    }
+    /* Content Headers */
+    .feed-section-heading {
+        margin-bottom: 20px;
+        font-size: clamp(1.3rem, 3vw, 24px);
+        color: #0f172a;
+    }
+    .empty-feed-card {
+        text-align: center; 
+        color: #777; 
+        padding: 30px;
+    }
+    /* Showcase Post Items & Meta Data */
+    .showcase-post-card {
+        margin-bottom: 25px;
+        padding: clamp(15px, 3vw, 24px);
+        box-sizing: border-box;
+    }
+    .post-header-row {
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        margin-bottom: 15px;
+        gap: 12px;
+        flex-wrap: wrap; /* Stacks author info and favorite button on small viewports */
+    }
+    .post-author-link {
+        display: flex; 
+        align-items: center; 
+        text-decoration: none; 
+        color: inherit;
+        min-width: 0;
+        flex: 1;
+    }
+    .author-avatar-img {
+        margin-right: 15px; 
+        width: 45px; 
+        height: 45px; 
+        border-radius: 50%; 
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+    .author-name-txt {
+        font-size: 16px; 
+        color: #1e3a8a;
+        word-break: break-word;
+    }
+    .post-date-small {
+        color: #888;
+        display: block;
+    }
+    /* Dynamic Favorite Button Interaction */
+    .favorite-toggle-btn {
+        padding: 6px 14px; 
+        display: flex; 
+        align-items: center; 
+        gap: 5px;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    /* Post Content Text & Imagery */
+    .post-title-h3 {
+        margin-top: 0; 
+        margin-bottom: 10px; 
+        color: #2c3e50;
+        font-size: clamp(1.1rem, 2.5vw, 18px);
+        word-break: break-word;
+    }
+    .post-body-content {
+        color: #34495e; 
+        line-height: 1.6; 
+        margin-bottom: 15px; 
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    
+    /* 🌟 Border က ပုံ size အတိုင်းဖြစ်ပြီး Card ရဲ့ အလယ်တည့်တည့်မှာ ပေါ်စေမည့် CSS */
+    .post-media-frame {
+        margin-top: 12px; 
+        width: 100%;
+        display: flex;
+        justify-content: center; /* 🌟 ပုံကို Card ရဲ့ အလယ်တည့်တည့် (Center Alignment) သို့ ပို့ပေးပါသည် */
+    }
+    .post-media-img {
+        max-width: 100%; /* Card ထက် ပုံမကျော်သွားစေရန် ကန့်သတ်သည် */
+        max-height: 450px; /* ပုံအမြင့်ဆုံး limit */
+        height: auto; 
+        display: block;
+        border: 1px solid #cbd5e1; /* 🌟 ပုံရဲ့ အနားသတ်အတိုင်း ကွက်တိကပ်နေမည့် Border (Facebook ပုံစံ) */
+        border-radius: 8px; /* ထောင့်ဝိုင်းပုံစံ */
+        box-sizing: border-box;
+    }
+
+    /* 📱 Responsive Media Queries for Mobile Screens */
+    @media (max-width: 576px) {
+        .search-flex-form {
+            flex-direction: column;
+        }
+        .search-submit-btn {
+            width: 100%;
+        }
+        .post-header-row {
+            align-items: flex-start;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="container">
+    <h2 class="feed-section-heading">Project Showcases & Feeds</h2>
+    <div class="card search-section-card">
+        <form action="/projects" method="GET" class="search-flex-form">
+            <input type="text" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" placeholder="Search approved project showcases by title or keywords..." class="search-text-input">
+            <button type="submit" class="btn search-submit-btn">Search</button>
+        </form>
+        <% if (typeof history !== 'undefined' && history.length > 0) { %>
+            <div class="history-meta-row">
+                <div class="history-tags-flex">
+                    <span class="history-label-txt">Recent Searches:</span>
+                    <% history.forEach(h => { %>
+                        <a href="/projects?search=<%= encodeURIComponent(h.keyword) %>" class="history-keyword-badge">🔍 <%= h.keyword %></a>
+                    <% }); %>
+                </div>
+                <form action="/search/clear" method="POST" class="clear-history-form">
+                    <button type="submit" class="clear-history-btn">🗑️ Clear History</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+    
+    
+    <% if (typeof posts === 'undefined' || posts.length === 0) { %>
+        <div class="card empty-feed-card">📷 No approved project posts available.</div>
+    <% } else { %>
+        <% posts.forEach(post => { %>
+            <div class="card showcase-post-card">
+                <div class="post-header-row">
+                    <a href="/user/profile/<%= post.student_id %>" class="post-author-link">
+                        <img src="/uploads/<%= post.profile_pic || 'default-avatar.png' %>" class="author-avatar-img">
+                        <div>
+                            <strong class="author-name-txt"><%= post.name %></strong><br>
+                            <small class="post-date-small"><%= new Date(post.created_at).toDateString() %></small>
+                        </div>
+                    </a>
+                    <button onclick="toggleFavorite('<%= post.id %>', this)" class="btn favorite-toggle-btn" style="background-color: <%= post.is_fav ? '#e74c3c' : '#bdc3c7' %>;">
+                        ❤️ Favorite (<span class="count"><%= post.fav_count %></span>)
+                    </button>
+                </div>
+                <h3 class="post-title-h3"><%= post.title %></h3>
+                
+                <!-- Repair နေရာ- ID တွေဖယ်ပြီး Wrapper နဲ့ ခလုတ်ကို တွဲပေးထားပါတယ် -->
+                <div class="description-wrapper" style="display: flex; flex-direction: column;">
+                    <p class="post-body-content truncated-text"><%= post.content %></p>
+                    <button class="see-more-btn" onclick="toggleDescription(this)" style="display: none;">See more</button>
+                </div>
+                <% if (post.image_url) { %>
+                    <div class="post-media-frame">
+                        <img src="/uploads/<%= post.image_url %>" class="post-media-img">
+                    </div>
+                <% } %>
+            </div>
+        <% }); %>
+    <% } %>
+</div>
+<script>
+function toggleFavorite(postId, btn) {
+    fetch('/post/favorite/' + postId, { method: 'POST' })
+    .then(res => res.status === 401 ? (alert("Please login first!"), window.location.href='/login') : res.json())
+    .then(data => {
+        if(!data) return;
+        let countSpan = btn.querySelector('.count');
+        let count = parseInt(countSpan.innerText);
+        btn.style.backgroundColor = data.status === 'favorited' ? '#e74c3c' : '#bdc3c7';
+        countSpan.innerText = data.status === 'favorited' ? count + 1 : count - 1;
+    }).catch(err => console.error(err));
+}
+// Repair နေရာ- စာမျက်နှာပေါ်ရှိ သတ်မှတ်စာကြောင်းထက် ရှည်သော ပို့စ်များကို ရှာပြီး ခလုတ်ဖော်ပေးသည့်စနစ်
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        let wrappers = document.querySelectorAll('.description-wrapper');
+        wrappers.forEach(function(wrapper) {
+            let desc = wrapper.querySelector('.post-body-content');
+            let btn = wrapper.querySelector('.see-more-btn');
+            
+            if (desc && btn) {
+                // စာသားအစစ်အမှန်အမြင့်က လက်ရှိမြင်ရတဲ့အမြင့်ထက် ကြီးနေရင် (၃ လိုင်းထက် ကျော်နေရင်)
+                if (desc.scrollHeight > desc.clientHeight) {
+                    btn.style.display = "inline-block";
+                }
+            }
+        });
+    }, 200); // Browser layout တည်ဆောက်ပြီးမှ သေချာတွက်ချက်ရန် ခဏစောင့်ခိုင်းခြင်း
+});
+// Repair နေရာ- အဖွင့်အပိတ်လုပ်မည့် စနစ်သစ်
+function toggleDescription(button) {
+    let desc = button.previousElementSibling; // ခလုတ်ရဲ့အပေါ်က <p> တဂ်ကို တိုက်ရိုက်ဖတ်ခြင်း
+    if (desc && desc.classList.contains("truncated-text")) {
+        desc.classList.remove("truncated-text");
+        button.innerText = "See less";
+    } else if (desc) {
+        desc.classList.add("truncated-text");
+        button.innerText = "See more";
+    }
+}
+</script>
+</body>
+</html>
+<%- include('partials/footer') %>

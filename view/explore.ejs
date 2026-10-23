@@ -1,0 +1,443 @@
+<%- include('partials/header') %>
+<style>
+   :root {
+    --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Safeguards against horizontal viewport overflow on mobile screens */
+}
+.gemini-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+    background-size: 400% 400%;
+    animation: geminiGradient 15s ease infinite;
+}
+@keyframes geminiGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+/* Description ကို ၃ လိုင်းပဲပြပြီး ကျန်တာကို ဝှက်ထားရန် */
+.truncated-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* ပြချင်သော စာကြောင်းအရေအတွက် */
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+/* See more / See less ခလုတ်ပုံစံ (မင်းရဲ့ ခရမ်းရောင် theme နဲ့ လိုက်ဖက်အောင် လုပ်ထားပါတယ်) */
+.see-more-btn {
+    background: transparent;
+    border: none;
+    color: #7c3aed; 
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 0;
+    margin-top: 6px;
+    text-align: left;
+    align-self: flex-start; /* Left alignment စာသားအောက် တည့်တည့်ဖြစ်အောင် */
+}
+.see-more-btn:hover {
+    text-decoration: underline;
+}
+    /* Main Layout Containers - Fluid Scaling */
+    .explore-container {
+        max-width: 1140px; 
+        width: 100%;
+        margin: clamp(20px, 4vw, 30px) auto; 
+        padding: 0 clamp(10px, 3vw, 20px); 
+        font-family: system-ui, -apple-system, sans-serif;
+        box-sizing: border-box;
+    }
+    .explore-title {
+        color: #0f172a; 
+        font-size: clamp(1.3rem, 3vw, 24px); 
+        font-weight: 700; 
+        margin-bottom: 25px; 
+        text-align: left;
+    }
+    /* Search Bar Bar & History Box */
+    .search-card {
+        background: #ffffff; 
+        border: 1px solid #e2e8f0; 
+        border-radius: 8px; 
+        padding: clamp(15px, 3vw, 20px); 
+        margin-bottom: 30px; 
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+    }
+    .search-form {
+        display: flex; 
+        gap: 12px; 
+        align-items: center;
+        flex-wrap: wrap; /* Allows search input and button to wrap gracefully on narrow smartphone screens */
+    }
+    .search-input {
+        flex: 1; 
+        min-width: 200px;
+        padding: 12px 16px; 
+        border: 2px solid #ddd; 
+        border-radius: 6px; 
+        font-size: 14px; 
+        outline: none; 
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+    .search-input:focus {
+        border-color: #7c3aed; 
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+    .search-submit-btn {
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); 
+        color: white; 
+        padding: 12px 24px; 
+        border: none; 
+        border-radius: 6px; 
+        font-size: 14px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        transition: opacity 0.2s;
+        white-space: nowrap;
+    }
+    .search-submit-btn:hover {
+        opacity: 0.9;
+    }
+    
+    /* Search History Elements */
+    .history-row {
+        margin-top: 15px; 
+        font-size: 13px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+    .history-tags-group {
+        display: flex; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+    .history-tag-link {
+        background: #f1f5f9; 
+        padding: 4px 12px; 
+        border-radius: 15px; 
+        text-decoration: none; 
+        color: #475569; 
+        font-size: 12px; 
+        border: 1px solid #e2e8f0;
+    }
+    .clear-history-form {
+        margin: 0;
+    }
+    .clear-history-btn {
+        background: transparent; 
+        color: #dc2626; 
+        border: none; 
+        font-size: 12px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        display: flex; 
+        align-items: center; 
+        gap: 2px; 
+        transition: background 0.2s;
+    }
+    .clear-history-btn:hover {
+        background: #fef2f2;
+    }
+    /* Internship Postings Content Grid & Feed */
+    .jobs-feed-list {
+        display: flex; 
+        flex-direction: column; 
+        gap: 25px; 
+        align-items: flex-start; 
+        width: 100%;
+    }
+    .empty-jobs-box {
+        background: #ffffff; 
+        border: 1px solid #e2e8f0; 
+        border-radius: 8px; 
+        width: 100%; 
+        text-align: center; 
+        color: #64748b; 
+        padding: 40px; 
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+    .job-item-card {
+        background: #ffffff; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 8px; 
+        width: 100%; 
+        box-sizing: border-box; 
+        padding: clamp(15px, 3vw, 24px); 
+        display: flex; 
+        flex-direction: column; 
+        gap: 14px;
+    }
+    .job-card-header {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: flex-start; 
+        width: 100%;
+        gap: 12px;
+        flex-wrap: wrap; /* Stacks header elements gracefully on smaller screens */
+    }
+    .company-profile-meta {
+        display: flex; 
+        align-items: center; 
+        gap: 12px;
+        min-width: 0;
+        flex: 1;
+    }
+    .company-meta-link {
+        display: flex; 
+        align-items: center; 
+        gap: 12px; 
+        text-decoration: none; 
+        color: inherit;
+        min-width: 0;
+    }
+    .company-logo-img {
+        width: 45px; 
+        height: 45px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        border: 2px solid #e2e8f0;
+        flex-shrink: 0;
+    }
+    .company-name-stack {
+        display: flex; 
+        flex-direction: column; 
+        gap: 2px;
+        min-width: 0;
+    }
+    .company-name-txt {
+        font-weight: 700; 
+        color: #1e3a8a; 
+        font-size: 16px;
+        word-break: break-word;
+    }
+    .company-name-txt:hover {
+        text-decoration: underline;
+    }
+    .post-date-txt {
+        font-size: 12px; 
+        color: #64748b;
+        white-space: nowrap;
+    }
+    /* Actions & Recruitment Status Badges */
+    .job-action-container {
+        margin-top: 0;
+        flex-shrink: 0;
+    }
+    .hired-status-badge {
+        background: #dcfce7; 
+        color: #15803d; 
+        padding: 8px 14px; 
+        border-radius: 6px; 
+        text-align: center; 
+        font-weight: bold; 
+        font-size: 13px; 
+        border: 1px solid #bbf7d0;
+        white-space: nowrap;
+    }
+    .btn-apply-job {
+        width: 100%; 
+        background: #2563eb; 
+        color: white; 
+        border: none; 
+        padding: 10px 16px; 
+        border-radius: 6px; 
+        font-weight: 500; 
+        cursor: pointer; 
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+    .btn-apply-job:hover {
+        background: #1d4ed8;
+    }
+    /* Job Content Details & Imagery */
+    .job-body-details {
+        display: flex; 
+        flex-direction: column; 
+        gap: 8px; 
+        width: 100%;
+        min-width: 0;
+    }
+    .job-title-h2 {
+        font-size: clamp(1rem, 2vw, 16px); 
+        font-weight: 700; 
+        color: #1e293b; 
+        margin: 0;
+        word-break: break-word;
+    }
+    .job-desc-p {
+        font-size: 14px; 
+        color: #334155; 
+        line-height: 1.6; 
+        margin: 0; 
+        white-space: pre-wrap; 
+        text-align: left;
+        word-break: break-word;
+    }
+    
+    /* 🌟 Border က ပုံ size အတိုင်းဖြစ်ပြီး Card ရဲ့ အလယ်တည့်တည့်မှာ ပေါ်စေမည့် CSS */
+    .job-banner-frame {
+        width: 100%; 
+        margin-top: 12px; 
+        display: flex;
+        justify-content: center; /* 🌟 ပုံကို Card ရဲ့ အလယ်တည့်တည့် (Center Alignment) သို့ ပို့ပေးပါသည် */
+    }
+    .job-banner-img {
+        max-width: 100%; /* Card ထက် ပုံမကျော်သွားစေရန် ကန့်သတ်သည် */
+        max-height: 500px; /* ပုံအမြင့်ဆုံး limit */
+        height: auto; 
+        display: block; 
+        border: 1px solid #cbd5e1; /* ပုံရဲ့ အနားသတ်အတိုင်း ကွက်တိကပ်နေမည့် Border */
+        border-radius: 8px; /* ထောင့်ဝိုင်းပုံစံ */
+        box-sizing: border-box;
+    }
+
+    /* 📱 Responsive Media Query Enhancements for Mobile Layouts */
+    @media (max-width: 576px) {
+        .job-card-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .job-action-container {
+            width: 100%;
+        }
+        .btn-apply-job {
+            width: 100%;
+        }
+    }
+</style>
+<div class="gemini-bg"></div>
+<div class="container explore-container">
+    <h1 class="explore-title">Available Internship Positions</h1>
+    
+    <div class="search-card">
+        <form action="/explore" method="GET" class="search-form">
+            <input type="text" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" placeholder="Search jobs, skills, or companies..." class="search-input">
+            <button type="submit" class="search-submit-btn">Search</button>
+        </form>
+        
+        <% if (typeof history !== 'undefined' && history.length > 0) { %>
+            <div class="history-row">
+                <div class="history-tags-group">
+                    <span style="color:#64748b;">Recent Searches:</span>
+                    <% history.forEach(h => { %>
+                        <a href="/explore?search=<%= encodeURIComponent(h.keyword) %>" class="history-tag-link">🔍 <%= h.keyword %></a>
+                    <% }); %>
+                </div>
+                
+                <form action="/search/clear-explore" method="POST" class="clear-history-form">
+                    <button type="submit" class="clear-history-btn">
+                        🗑️ Clear History
+                    </button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+    
+    <div class="jobs-feed-list">
+        <% if (typeof jobs === 'undefined' || jobs.length === 0) { %>
+            <div class="empty-jobs-box">
+                No internship postings match your search criteria at the moment.
+            </div>
+        <% } else { %>
+            <% jobs.forEach(job => { %>
+                <div class="job-item-card">
+                    <div class="job-card-header">
+                        <div class="company-profile-meta">
+                            <a href="/user/profile/<%= job.company_id %>" class="company-meta-link">
+                                <img src="/uploads/<%= job.profile_pic || 'default-avatar.png' %>" class="company-logo-img">
+                                <div class="company-name-stack">
+                                    <strong class="company-name-txt"><%= job.company_name %></strong>
+                                    <span class="post-date-txt"><%= new Date(job.created_at).toDateString() %></span>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <div class="job-action-container">
+                            <% if (job.job_hired_status === 'hired') { %>
+                                <div class="hired-status-badge">
+                                    🟢 Hired
+                                </div>
+                            <% } else { %>
+                                <form action="/job/apply/<%= job.id %>" method="POST">
+                                    <button type="submit" class="btn-apply-job">Apply Now</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="job-body-details">
+                        <h2 class="job-title-h2"><%= job.title %></h2>
+                     <!-- မူလ <p class="job-desc-p"> နေရာမှာ အခုလို အစားထိုးပါ -->
+<div class="desc-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+    <p class="job-desc-p truncated-text"><%= job.description %></p>
+    <button class="see-more-btn" onclick="toggleDescription(this)" style="display: none;">See more</button>
+</div>
+                    </div>
+                    
+                    <% if (job.image_url) { %>
+                        <div class="job-banner-frame">
+                            <img src="/uploads/<%= job.image_url %>" class="job-banner-img" alt="Job Banner">
+                        </div>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // စာမျက်နှာပေါ်မှာ ရှိသမျှ description အားလုံးကို လှမ်းဖတ်မယ်
+    setTimeout(function() {
+        let wrappers = document.querySelectorAll('.desc-wrapper');
+        
+        wrappers.forEach(function(wrapper) {
+            let desc = wrapper.querySelector('.job-desc-p');
+            let btn = wrapper.querySelector('.see-more-btn');
+            
+            if (desc && btn) {
+                // စာသားက သတ်မှတ်ထားတဲ့ ၃ လိုင်းထက် ပိုရှည်နေရင် ခလုတ်ကို ဖော်ပေးမယ်
+                if (desc.scrollHeight > desc.clientHeight) {
+                    btn.style.display = "inline-block";
+                }
+            }
+        });
+    }, 200); // Browser ကို text layout ဆွဲဖို့ အချိန်နည်းနည်းပေးတာပါ
+});
+// See more / See less အလုပ်လုပ်မယ့် Function
+function toggleDescription(button) {
+    // နှိပ်လိုက်တဲ့ ခလုတ်ရဲ့ အပေါ်က <p> တဂ်ကို ရှာတာပါ
+    let desc = button.previousElementSibling;
+    if (desc && desc.classList.contains("truncated-text")) {
+        desc.classList.remove("truncated-text");
+        button.innerText = "See less";
+    } else if (desc) {
+        desc.classList.add("truncated-text");
+        button.innerText = "See more";
+    }
+}
+</script>
+</body>
+</html>
+<%- include('partials/footer') %>
+```[cite: 10]

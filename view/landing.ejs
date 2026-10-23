@@ -1,0 +1,1064 @@
+<%- include('partials/header') %>
+<style>
+    /* --- Root Variables & Reset --- */
+    :root {
+        --sparkle-gradient: linear-gradient(135deg, #00c6ff, #0072ff, #9333ea, #ff007f);
+        --gemini-bg: linear-gradient(120deg, #f8fafc 0%, #e2e8f0 40%, #fae8ff 70%, #eff6ff 100%);
+        --glam-glow: 0 8px 32px 0 rgba(147, 51, 234, 0.2);
+        --glass-blur: blur(20px);
+        --text-dark: #0f172a;
+        --text-light: #475569;
+        --bg-glass: rgba(255, 255, 255, 0.85);
+        --bg-white: #ffffff;
+        --bg-light: #f8fafc;
+        --card-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.08);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; /* Prevents unwanted horizontal scrolling on mobile screens */
+    }
+    .gemini-bg {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #fce7f3, #eff6ff);
+        background-size: 400% 400%;
+        animation: geminiGradient 15s ease infinite;
+    }
+    @keyframes geminiGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    body {
+        background: var(--gemini-bg);
+        background-size: 300% 300%;
+        animation: fluidGlow 20s ease infinite;
+        color: var(--text-dark);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+    @keyframes fluidGlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    /* --- FULL SCREEN CAROUSEL (SWIPER STYLE) --- */
+    .carousel-section {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+    .carousel-viewframe {
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+    }
+    .carousel-viewframe:active { cursor: grabbing; }
+    .carousel-slider-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.05s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+    }
+    .carousel-slide {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        user-select: none;
+    }
+    .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+    }
+    .carousel-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: clamp(4rem, 10vw, 12rem) clamp(1rem, 5vw, 8%) clamp(2rem, 5vw, 6rem) clamp(1rem, 5vw, 8%);
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 20%, rgba(15, 23, 42, 0.4) 60%, transparent);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    .carousel-caption h3 {
+        font-size: clamp(1.8rem, 5vw, 3.5rem);
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        max-width: 900px;
+        letter-spacing: -1px;
+        line-height: 1.2;
+        background: var(--sparkle-gradient);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmerEffect 6s linear infinite;
+        word-break: break-word;
+    }
+    .carousel-caption p {
+        font-size: clamp(0.95rem, 2vw, 1.4rem);
+        max-width: 700px;
+        opacity: 0.9;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        font-weight: 300;
+    }
+    .carousel-dots-container {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 8px 16px;
+        border-radius: 30px;
+        backdrop-filter: blur(10px);
+        max-width: 90vw;
+        overflow-x: auto;
+    }
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+    .dot.active {
+        background: rgb(180, 207, 59);
+        width: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(255,255,255,0.8);
+    }
+    /* --- HERO UNIT --- */
+    .hero-section { padding: clamp(3rem, 8vw, 8rem) 0 clamp(2rem, 4vw, 4rem) 0; }
+    .hero-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 5%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: clamp(2rem, 4vw, 4rem);
+    }
+    .hero-left { flex: 1.2; min-width: 0; }
+    .hero-left h1 {
+        font-size: clamp(2.2rem, 6vw, 4.5rem);
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: var(--sparkle-gradient);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmerEffect 6s linear infinite;
+        letter-spacing: -1px;
+        word-break: break-word;
+    }
+    @keyframes shimmerEffect {
+        to { background-position: 200% center; }
+    }
+    /* Scroll Reveal Pattern */
+    .reveal-section {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98);
+        transition: opacity 0.8s cubic-bezier(0.2, 1, 0.2, 1), 
+                    transform 0.8s cubic-bezier(0.2, 1, 0.2, 1);
+    }
+    .reveal-section.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    
+    .hero-left p { font-size: clamp(1rem, 2vw, 1.35rem); color: var(--text-light); margin-bottom: 2.2rem; max-width: 520px; }
+    .hero-right { flex: 1; position: relative; height: 400px; display: flex; align-items: center; justify-content: center; width: 100%; }
+    .overlap-wrapper { position: relative; width: 100%; max-width: 450px; height: 100%; }
+        
+    .overlap-img {
+        position: absolute;
+        border-radius: 32px;
+        box-shadow: var(--card-shadow);
+        object-fit: cover;
+        transition: var(--transition);
+        border: 8px solid white;
+    }
+    .overlap-img:hover {
+        transform: scale(1.08) translateY(-10px);
+        z-index: 10 !important;
+        box-shadow: 0 30px 60px rgba(147, 51, 234, 0.25);
+    }
+    .img-main { width: 65%; height: 360px; right: 0; top: 0; z-index: 2; }
+    .img-left-down { width: 55%; height: 240px; left: -5%; bottom: 0; z-index: 4; }
+    .img-right-accent { width: 45%; height: 200px; right: -10%; top: 35%; z-index: 3; }
+    .cta-btn {
+        background: var(--sparkle-gradient);
+        background-size: 200% auto;
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        box-shadow: var(--glam-glow);
+        display: inline-block;
+        transition: var(--transition);
+        text-align: center;
+    }
+    .cta-btn:hover { transform: translateY(-4px) scale(1.02); background-position: right center; box-shadow: 0 15px 40px rgba(147, 51, 234, 0.4); }
+    
+    /* --- INTERNSHIP CATEGORIES --- */
+    .section-title {
+        text-align: center;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 900;
+        margin-bottom: 3rem;
+        letter-spacing: -1px;
+    }
+    .section-title::after {
+        content: ''; display: block; width: 80px; height: 5px; background: var(--sparkle-gradient); margin: 15px auto 0 auto; border-radius: 10px;
+    }
+    .glam-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        max-width: 1300px;
+        margin: 0 auto 4rem auto;
+        padding: 0 5%;
+    }
+    .category-glow-card {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+        text-align: center;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    .category-glow-card:hover {
+        background: white;
+        transform: translateY(-10px);
+        border-color: rgba(147, 51, 234, 0.4);
+        box-shadow: var(--glam-glow), 0 20px 40px rgba(0,0,0,0.05);
+    }
+    .category-glow-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+    .category-glow-card h4 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .category-glow-card p { color: var(--text-light); font-size: 0.9rem; }
+    
+    /* --- WHO WE ARE SECTION STYLE --- */
+    .who-we-are-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 3rem;
+        flex-wrap: wrap;
+    }
+    .who-left {
+        flex: 1;
+        min-width: 280px;
+    }
+    .who-left p {
+        font-size: 1.05rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .who-right {
+        flex: 1;
+        min-width: 280px;
+        width: 100%;
+    }
+    .who-img {
+        width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 24px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid #f1f5f9;
+    }
+    
+    /* --- STEP BY STEP SECTION STYLE --- */
+    .steps-timeline-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.5rem;
+        margin-top: 3rem;
+        padding: 0 1rem;
+        flex-wrap: wrap;
+    }
+    .steps-timeline-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 22px;
+        left: 5%;
+        width: 90%;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+    .step-linear-card {
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    .step-number {
+        width: 45px;
+        height: 45px;
+        background: var(--sparkle-gradient);
+        background-size: 200% 200%;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.15rem;
+        margin: 0 auto 1.2rem auto;
+        box-shadow: 0 0 0 6px var(--bg-white), 0 4px 10px rgba(147, 51, 234, 0.25);
+        transition: var(--transition);
+    }
+    .step-linear-card:hover .step-number {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 8px var(--bg-white), 0 6px 15px rgba(147, 51, 234, 0.4);
+    }
+    .step-linear-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-weight: 700;
+    }
+    .step-linear-card p {
+        font-size: 0.88rem;
+        color: var(--text-light);
+        padding: 0 0.5rem;
+    }
+    
+    /* --- Custom Section Framework --- */
+    .section {
+        padding: clamp(3rem, 6vw, 5rem) 5%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .section-fullwidth {
+        padding: clamp(3rem, 6vw, 5rem) 2%;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .section h2 {
+        text-align: center;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        font-weight: 800;
+        margin-bottom: 2.5rem;
+        position: relative;
+    }
+    .section h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: var(--sparkle-gradient);
+        margin: 10px auto 0 auto;
+        border-radius: 10px;
+    }
+    .section-left-title h2 {
+        text-align: left;
+    }
+    .section-left-title h2::after {
+        margin: 10px 0 0 0;
+    }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    .card {
+        background: var(--bg-white);
+        padding: 2.5rem 1.5rem;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid #f4f4f5;
+        text-align: center;
+    }
+    .card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        background: var(--sparkle-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* --- INTERNSHIP CATEGORIES STYLE --- */
+    .categories-outer-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        background: var(--bg-white);
+        border-radius: 24px;
+        padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.5rem);
+        box-shadow: var(--card-shadow);
+        border: 1px solid #f1f5f9;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .slider-viewport {
+        width: 100%;
+        overflow: hidden;
+    }
+    .parallel-container {
+        display: flex;
+        gap: 1.5rem;
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .category-item-card {
+        flex: 0 0 calc(33.333% - 1rem);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: var(--bg-light);
+        padding: 1.25rem;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        transition: var(--transition);
+        height: max-content;
+        box-sizing: border-box;
+    }
+    .category-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .cat-card-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+    .cat-card-details h3 {
+        font-size: 1.2rem;
+        color: #9333ea;
+        margin-bottom: 0.6rem;
+        font-weight: 800;
+        word-break: break-word;
+    }
+    .cat-card-details p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    .category-item-card.expanded .cat-card-details p {
+        display: block;
+        overflow: visible;
+    }
+    .read-more-btn {
+        background: none;
+        border: none;
+        color: #2563eb;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        display: inline-block;
+        transition: var(--transition);
+        padding: 0;
+    }
+    .read-more-btn:hover {
+        color: #ec4899;
+        text-decoration: underline;
+    }
+    
+    /* --- ARROWS & MORE CONTROLS --- */
+    .slider-controls-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        border-top: 2px solid #f1f5f9;
+        padding-top: 1.5rem;
+        width: 100%;
+    }
+    .arrow-btn-box {
+        display: flex;
+        gap: 1rem;
+    }
+    .arrow-nav-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 2px solid #9333ea;
+        background: transparent;
+        color: #9333ea;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    .arrow-nav-btn:hover {
+        background: var(--sparkle-gradient);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 5px 15px rgba(147, 51, 234, 0.3);
+    }
+    .more-link-text {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2563eb;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+    .more-link-text:hover {
+        color: #ec4899;
+        transform: translateX(4px);
+    }
+   
+    /* 📱 Responsive Media Queries for Mobile & Tablet Views */
+    @media (max-width: 968px) {
+        .hero-container { flex-direction: column; text-align: center; padding-top: 2rem; }
+        .hero-left h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); }
+        .hero-right { width: 100%; height: 320px; margin-top: 1.5rem; }
+        .category-item-card {
+            flex: 0 0 100%;
+        }
+        .steps-timeline-wrapper::before {
+            display: none; /* Hides horizontal step bar on mobile vertical layout */
+        }
+        .steps-timeline-wrapper {
+            flex-direction: column;
+            gap: 2rem;
+            align-items: stretch;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .category-item-card {
+            flex: 0 0 calc(50% - 0.75rem);
+        }
+    }
+
+    /* NEW: DYNAMIC MYANMAR JOBS MARQUEE STYLE */
+    .jobs-marquee-section {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1.5rem 0;
+        overflow: hidden;
+        width: 100%;
+    }
+    .marquee-title {
+        text-align: center;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #64748b;
+        margin-bottom: 1rem;
+        font-weight: 800;
+    }
+    .marquee-container {
+        display: flex;
+        width: max-content;
+    }
+    .marquee-track {
+        display: flex;
+        gap: 1.5rem;
+        animation: scrollJobs 30s linear infinite;
+        padding-right: 1.5rem;
+    }
+    /* Pause ticker on hover */
+    .marquee-container:hover .marquee-track {
+        animation-play-state: paused;
+    }
+    .job-tag-card {
+        background: var(--bg-white);
+        border: 1px solid #e2e8f0;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--text-dark);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    .job-tag-card:hover {
+        border-color: #9333ea;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(147, 51, 234, 0.1);
+    }
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px #22c55e;
+    }
+    @keyframes scrollJobs {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+</style>
+<div class="gemini-bg"></div>
+<main>
+    <!-- Full Screen Carousel -->
+    <section class="carousel-section">
+        <div class="carousel-viewframe" id="carouselViewframe">
+            <div class="carousel-slider-track" id="carouselTrack">
+                <div class="carousel-slide">
+                    <img src="/images/welcome.jpg" alt="UI/UX Engineering">
+                    <div class="carousel-caption">
+                        <h3>Welcome To Our InternHive</h3>
+                        <p>Start your journey with us for your Bright future.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/studentrole.jpg" alt="Software Engineering">
+                    <div class="carousel-caption">
+                        <h3>Student Role</h3>
+                        <p>Students can create profiles and showcase their skills, education, and projects.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/cm.jpg" alt="Digital Marketing">
+                    <div class="carousel-caption">
+                        <h3>Company Role</h3>
+                        <p>Companies can post internship opportunities and specify the skills they require.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/7.jpg" alt="Data Analytics">
+                    <div class="carousel-caption">
+                        <h3>Application Development</h3>
+                        <p>Students can easily apply to internships that match their interests and skills by using their profile.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/10.jpg" alt="Business Management">
+                    <div class="carousel-caption">
+                        <h3>Our Mission</h3>
+                        <p>We offer an easy, secure platform that helps students gain experience while helping companies find qualified interns.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-dots-container" id="dotsContainer"></div>
+    </section>
+    <!-- Split Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-left">
+                <h1>Find Your Dream Internship</h1>
+                <p>Connect with industry leading global teams, build your validated skill profile, and accelerate your dynamic professional journey.</p>
+                <a href="/explore" class="cta-btn">Explore Internships</a>
+            </div>
+            <div class="hero-right">
+                <div class="overlap-wrapper">
+                    <img src="/images/w1.jpg" alt="Workspace Team" class="overlap-img img-main">
+                    <img src="/images/w2.jpg" alt="Student coding" class="overlap-img img-left-down">
+                    <img src="/images/w3.jpg" alt="Successful Candidate" class="overlap-img img-right-accent">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- TRENDING FIELDS -->
+    <section style="padding: 4rem 0;">
+        <h2 class="section-title">Trending Internship Fields</h2>
+        <div class="glam-categories">
+            <div class="category-glow-card">
+                <span class="icon">💻</span>
+                <h4>AI Engineering</h4>
+                <p>Next-gen LLM integration & neural networks development.</p>
+            </div>
+            <div class="category-glow-card">
+                <span class="icon">🎨</span>
+                <h4>Product Design</h4>
+                <p>Immersive spatial UI & high-converting layouts creation.</p>
+            </div>
+            <div class="category-glow-card">
+                <span class="icon">📈</span>
+                <h4>Growth Hacking</h4>
+                <p>Advanced algorithmic marketing & viral loops strategy.</p>
+            </div>
+            <div class="category-glow-card">
+                <span class="icon">⛓️</span>
+                <h4>Web3 Architecture</h4>
+                <p>Decentralized ledger development & secure frameworks.</p>
+            </div>
+        </div>
+    </section>
+    <!-- WHO WE ARE SECTION -->
+    <section class="section section-left-title reveal-section" style="padding-bottom: 2rem;">
+        <div class="who-we-are-container">
+            <div class="who-left">
+                <h2>Who We Are</h2>
+                <p>At InternHive, we are a leading skill-based internship platform that successfully bridges the gap between talented students, young professionals, and top-tier workplaces.</p>
+                <p>In today's digital era, our mission is to provide structured, diverse internship opportunities that empower youth with practical, real-world experience alongside their academic learning. We are fully committed to continuously supporting and nurturing the next generation of leaders for a sustainable and prosperous future.</p>
+            </div>
+            <div class="who-right">
+                <img src="/images/who.jpg" alt="Team Work" class="who-img">
+            </div>
+        </div>
+    </section>
+    <!-- HOW INTERNHIVE WORKS SECTION -->
+    <section class="section reveal-section" style="padding-top: 3rem; padding-bottom: 3rem;">
+        <h2>How InternHive Works</h2>
+        <div class="steps-timeline-wrapper">
+            <div class="step-linear-card">
+                <div class="step-number">1</div>
+                <h3>Sign Up</h3>
+                <p>Create your profile and add your skills.</p>
+            </div>
+            <div class="step-linear-card">
+                <div class="step-number">2</div>
+                <h3>Explore</h3>
+                <p>Filter and find internship positions.</p>
+            </div>
+            <div class="step-linear-card">
+                <div class="step-number">3</div>
+                <h3>Apply</h3>
+                <p>Submit your application with just one click.</p>
+            </div>
+            <div class="step-linear-card">
+                <div class="step-number">4</div>
+                <h3>Gain Experience</h3>
+                <p>Start your internship and get real-world experience.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Why Choose Us Section -->
+    <section class="section reveal-section" style="padding-top: 3rem;">
+        <h2>Why Choose Us?</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>100+ Companies</h3>
+                <p>Explore internship opportunities from top companies.</p>
+            </div>
+            <div class="card">
+                <h3>Easy Application</h3>
+                <p>Apply for internships with just a few clicks.</p>
+            </div>
+            <div class="card">
+                <h3>Career Growth</h3>
+                <p>Gain valuable experience and build your professional skills.</p>
+            </div>
+        </div>
+    </section>
+    <!-- INTERNSHIP CATEGORIES SECTION -->
+    <section class="section-fullwidth reveal-section" style="max-width: 1400px;">
+        <h2>Internship Categories</h2>
+    </br>
+        <div class="categories-outer-wrapper">
+            <div class="slider-viewport">
+                <div class="parallel-container" id="slideTrack">
+                    <!-- Card 1 -->
+                    <div class="category-item-card">
+                        <img src="/images/1.jpg" alt="Web Dev" class="cat-card-img">
+                        <div class="cat-card-details">
+                            <h3>Internship (Retail) (Data Entry)</h3>
+                        <p>Capital Diamond Star Group (CDSG) ၏ Retail Cluster မှ Administrative ပိုင်းတွင် စိတ်ပါဝင်စားသူများအတွက် Paid Internship အခွင့်အလမ်းတစ်ရပ်ကို ခေါ်ယူနေပြီ ဖြစ်ပါသည်။ ဤ Internship Program သည် ၃ လမှ ၆ လအထိ ကြာမြင့်မည်ဖြစ်ပြီး ပျော်ရွှင်စရာကောင်းသော လုပ်ငန်းခွင် ပတ်ဝန်းကျင်တွင် စနစ်တကျ သင်တန်းများ (Training Provided) တက်ရောက်ကာ သတ်မှတ်ထားသော လုပ်ငန်းတာဝန်များကို လက်တွေ့ သင်ယူလုပ်ကိုင်ခွင့် ရရှိမည် ဖြစ်ပါသည်။ အလုပ်ချိန်မှာ တနင်္လာမှ သောကြာနေ့အထိ ဖြစ်ပြီး၊ အလုပ်သင် ကာလအတွင်း Paid Internship အဖြစ် ခံစားခွင့်များ ရရှိမည့်အပြင် အစဉ်အလာကောင်းမွန်ပါက ရာထူးတိုး အချိန်ပြည့် ဝန်ထမ်း (Full-time Employment) အဖြစ် ခန့်အပ်ခံရနိုင်သည့် အခွင့်အလမ်းများလည်း ပါဝင်ပါသည်။</p>
+                            <button class="read-more-btn" onclick="toggleReadMore(this)">Read More</button>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="category-item-card">
+                        <img src="/images/3.jpg" alt="Software Eng" class="cat-card-img">
+                        <div class="cat-card-details">
+                            <h3>Flutter Developer Internship (M/F)</h3>
+                            <p>Myanmar Zarla Distribution Co., Ltd မှ လူငယ် Developer များအတွက် အလုပ်အကိုင် အခွင့်အလမ်းများ ဖန်တီးပေးရန်၊ တက္ကသိုလ် ပညာရေးနှင့် လုပ်ငန်းခွင် အတွေ့အကြုံ ကွာဟမှုကို လျှော့ချပေးရန်နှင့် Flutter Mobile Application Development အပါအဝင် Software Engineering ဆိုင်ရာ လက်တွေ့ကျသော ကျွမ်းကျင်မှုများကို မြှင့်တင်ပေးရန် ရည်ရွယ်၍ "Flutter Developer Internship (M/F)" ကို ခေါ်ယူနေပြီ ဖြစ်ပါသည်။ ဤ Internship Program တွင် စိတ်ပါဝင်စားသူ မည်သူမဆို လျှောက်ထားနိုင်ပြီး၊ သင်ယူထားသော ပညာရပ်များကို အခြေခံ၍ လက်တွေ့သုံး Application များ တီထွင်ခြင်း၊ Modern App Architecture နှင့် Deployment Process များကို Hands-on Experience ဖြင့် သင်ယူခွင့် ရရှိမည် ဖြစ်သည့်အပြင် Teamwork၊ Problem Solving နှင့် Professional Development Skills များကိုပါ မြှင့်တင်ပေးသွားမည် ဖြစ်ပါသည်။ အလုပ်ချိန်မှာ တနင်္ဂနွေနေ့နှင့် အများပြည်သူ ရုံးပိတ်ရက်များ မှအပ မနက် ၈ နာရီမှ ညနေ ၄ နာရီအထိ ဖြစ်ပြီး နေ့လည်စာ ကျွေးမွေးမည် ဖြစ်ပါသည်။</p>
+                            <button class="read-more-btn" onclick="toggleReadMore(this)">Read More</button>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="category-item-card">
+                        <img src="/images/MIT internship.jpg" alt="UIUX" class="cat-card-img">
+                        <div class="cat-card-details">
+                            <h3>IT Internship</h3>
+                            <p>Myanmar Information Technology (MIT) မှ ဖွင့်လှစ်သည့် IT Internship Program (M/F) 2026 အတွက် ၂၀၂၆ ခုနှစ်၊ ဩဂုတ်လမှ အောက်တိုဘာလအထိ (August – October 2026) လက်တွေ့လုပ်ငန်းခွင် အတွေ့အကြုံ ရယူနိုင်ရန် လျှောက်လွှာများ စတင်ခေါ်ယူနေပြီဖြစ်ပါသည်။ သင်ယူလိုစိတ်ရှိပြီး တက်ကြွသူများ၊ တာဝန်ယူစိတ်ရှိ၍ အသင်းအဖွဲ့နှင့် ပူးပေါင်းဆောင်ရွက်နိုင်သူများအနေဖြင့် လျှောက်ထားနိုင်ပြီး IT, Finance, Accountancy သို့မဟုတ် Business Administration နှင့် သက်ဆိုင်သည့် Diploma သို့မဟုတ် ဘွဲ့တစ်ခုခု ရရှိထားသူများ လျှောက်ထားနိုင်ပါသည်။ ဤ Program သို့ ပါဝင်ခြင်းဖြင့် လက်တွေ့လုပ်ငန်းခွင် အတွေ့အကြုံများနှင့် Business Operations များကို နီးကပ်စွာ လေ့လာခွင့် ရရှိမည့်အပြင် လုပ်ငန်းခွင်ဆိုင်ရာ ကျွမ်းကျင်မှု Skills များကိုလည်း မြှင့်တင်နိုင်မည် ဖြစ်ပါသည်။ လျှောက်လွှာပိတ်ရက်မှာ ၂၀၂၆ ခုနှစ်၊ ဇူလိုင်လ ၂၀ ရက် (July 20, 2026) ဖြစ်ပါသည်။</p>
+                            <button class="read-more-btn" onclick="toggleReadMore(this)">Read More</button>
+                        </div>
+                    </div>
+                    <div class="category-item-card">
+                        <img src="/images/4.jpg" alt="Networking" class="cat-card-img">
+                        <div class="cat-card-details">
+                            <h3>IT Enterprise Architect​ Internship</h3>
+                            <p>Dai-ichi Life Myanmar မှ ဘွဲ့ရပြီးခါစ သို့မဟုတ် နိုင်ငံတကာ လုပ်ငန်းအတွေ့အကြုံ ရှာဖွေနေသည့် လူငယ်များနှင့် နယ်ပယ်အသစ်တွင် အတွေ့အကြုံသစ် ရှာဖွေလိုသည့် လုပ်ငန်းအတွေ့အကြုံရှိသူများအတွက် “Full-Time Paid Internship Program 2026” ကို မကြာမီ စတင်တော့မည် ဖြစ်ပါသည်။ ဤ Program တွင် အသက်အာမခံ လုပ်ငန်းနယ်ပယ်၏ မတူညီသော ဌာနများ၌ ၆ လတာ အချိန်ပြည့် လုပ်ကိုင်ခွင့် ရရှိမည်ဖြစ်ပြီး အနာဂတ်အတွက် လုပ်ငန်းအတွေ့အကြုံများနှင့် ဗဟုသုတများကို နီးကပ်စွာ သင်ယူလေ့လာနိုင်မည် ဖြစ်ပါသည်။ စိတ်ပါဝင်စားသူများအနေဖြင့် လျှောက်ထားနိုင်ပြီး HR Team မှ Resume များကို စိစစ်ကာ Shortlist ရွေးချယ်ခံရသူများကိုသာ Interview အတွက် ဆက်သွယ် အကြောင်းကြားသွားမည် ဖြစ်ပါသည်။ လျှောက်လွှာများကို ဇူလိုင်လ ၂၅ ရက်နေ့ နောက်ဆုံးထား၍ လက်ခံပေးသွားမည် ဖြစ်ပါသည်။</p>
+                            <button class="read-more-btn" onclick="toggleReadMore(this)">Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- UPDATED CONTROLS: ARROWS WITH MORE TEXT -->
+            <div class="slider-controls-center">
+                <div class="arrow-btn-box">
+                    <button class="arrow-nav-btn" id="prevBtn">&#10094;</button>
+                    <button class="arrow-nav-btn" id="nextBtn">&#10095;</button>
+                </div>
+                <a href="/explore" class="more-link-text">More &rarr;</a>
+            </div>
+        </div>
+    </section>
+     <!-- NEW: DYNAMIC MYANMAR INTERNSHIP JOBS TICKER -->
+        <section class="jobs-marquee-section">
+            <div class="marquee-title">Featured Myanmar Internship Jobs</div>
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Frontend Developer Intern (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> UI/UX Designer Trainee (Mandalay)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Mobile App Engineer Intern (Remote)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Digital Marketing Executive (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Data Analyst Intern (Naypyitaw)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Cyber Security Trainee (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> QA Automation Engineer (Remote)</div>
+                    <!-- Duplicate items for seamless continuous looping -->
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Frontend Developer Intern (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> UI/UX Designer Trainee (Mandalay)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Mobile App Engineer Intern (Remote)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Digital Marketing Executive (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Data Analyst Intern (Naypyitaw)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> Cyber Security Trainee (Yangon)</div>
+                    <div class="job-tag-card"><span class="pulse-dot"></span> QA Automation Engineer (Remote)</div>
+                </div>
+            </div>
+        </section>
+</main>
+<!-- Functional Scripts -->
+<script>
+    // --- Sidebar Mechanics & UI Toggles ---
+    const openMenuBtn = document.getElementById('openMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const sideMenuBar = document.getElementById('sideMenuBar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function toggleSidebar() {
+        if(sideMenuBar && sidebarOverlay) {
+            sideMenuBar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+    }
+    if(openMenuBtn) openMenuBtn.addEventListener('click', toggleSidebar);
+    if(closeMenuBtn) closeMenuBtn.addEventListener('click', toggleSidebar);
+    if(sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+    // --- Swiper-Style 10-Image Seamless Infinite Slider Logic ---
+    const viewframe = document.getElementById('carouselViewframe');
+    const track = document.getElementById('carouselTrack');
+    const originalSlides = Array.from(track.children);
+    const totalOriginals = originalSlides.length;
+    const dotsContainer = document.getElementById('dotsContainer');
+    
+    // Create Clones for Loop
+    const firstClone = originalSlides[0].cloneNode(true);
+    const lastClone = originalSlides[totalOriginals - 1].cloneNode(true);
+    
+    track.appendChild(firstClone);
+    track.insertBefore(lastClone, originalSlides[0]);
+    
+    let carouselIndex = 1; 
+    let slideInterval;
+    let isTransitioning = false;
+    let startX = 0;
+    let isDragging = false;
+    track.style.transition = 'none';
+    track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+    // Generate Indicators
+    originalSlides.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            if (isTransitioning) return;
+            goToSlide(index + 1);
+            restartAutoplay();
+        });
+        dotsContainer.appendChild(dot);
+    });
+    const dots = Array.from(dotsContainer.children);
+    function updateDots(activeOriginalIndex) {
+        dots.forEach((dot, i) => {
+            if (i === activeOriginalIndex) dot.classList.add('active');
+            else dot.classList.remove('active');
+        });
+    }
+    function goToSlide(targetIndex) {
+        isTransitioning = true;
+        carouselIndex = targetIndex;
+        track.style.transition = 'transform 0.7s cubic-bezier(0.25, 1, 0.5, 1)';
+        track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        let dotIndex = carouselIndex - 1;
+        if (carouselIndex === 0) dotIndex = totalOriginals - 1;
+        if (carouselIndex === totalOriginals + 1) dotIndex = 0;
+        updateDots(dotIndex);
+    }
+    function nextSlide() {
+        if (isTransitioning) return;
+        goToSlide(carouselIndex + 1);
+    }
+    function prevSlide() {
+        if (isTransitioning) return;
+        goToSlide(carouselIndex - 1);
+    }
+    track.addEventListener('transitionend', () => {
+        isTransitioning = false;
+        if (carouselIndex === totalOriginals + 1) {
+            track.style.transition = 'none';
+            carouselIndex = 1;
+            track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        }
+        if (carouselIndex === 0) {
+            track.style.transition = 'none';
+            carouselIndex = totalOriginals;
+            track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        }
+    });
+    // Swiping Engine
+    viewframe.addEventListener('mousedown', dragStart);
+    viewframe.addEventListener('touchstart', dragStart, { passive: true });
+    viewframe.addEventListener('mouseup', dragEnd);
+    viewframe.addEventListener('mouseleave', dragEnd);
+    viewframe.addEventListener('touchend', dragEnd);
+    viewframe.addEventListener('mousemove', dragMove);
+    viewframe.addEventListener('touchmove', dragMove, { passive: true });
+    function dragStart(e) {
+        if (isTransitioning) return;
+        isDragging = true;
+        startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+        clearInterval(slideInterval);
+    }
+    function dragMove(e) {
+        if (!isDragging) return;
+        const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+        const diffX = currentX - startX;
+        const viewframeWidth = viewframe.offsetWidth;
+        const currentPercentage = (diffX / viewframeWidth) * 100;
+        
+        track.style.transition = 'none';
+        track.style.transform = `translateX(calc(-${carouselIndex * 100}% + ${currentPercentage}%))`;
+    }
+    function dragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const endX = e.type.includes('mouse') ? e.pageX : (e.changedTouches ? e.changedTouches[0].clientX : startX);
+        const diffX = endX - startX;
+        if (Math.abs(diffX) > 80) { 
+            if (diffX > 0) prevSlide(); 
+            else nextSlide(); 
+        } else {
+            goToSlide(carouselIndex); 
+        }
+        startAutoplay();
+    }
+    function startAutoplay() {
+        slideInterval = setInterval(nextSlide, 5500);
+    }
+    function restartAutoplay() {
+        clearInterval(slideInterval);
+        startAutoplay();
+    }
+    startAutoplay();
+     
+    // Category Card Expanded text toggle
+    function toggleReadMore(btn) {
+        const card = btn.closest('.category-item-card');
+        card.classList.toggle('expanded');
+        if (card.classList.contains('expanded')) {
+            btn.textContent = "Read Less";
+        } else {
+            btn.textContent = "Read More";
+        }
+    }
+    // Horizontal Slider Logic
+    const slideTrack = document.getElementById('slideTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    let sliderIndex = 0;
+    function getVisibleCardsCount() {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+    }
+    function updateSliderPosition() {
+        const card = document.querySelector('.category-item-card');
+        if (!card) return;
+        const cardWidth = card.getBoundingClientRect().width;
+        const gap = 24; // 1.5rem gap in pixels
+        slideTrack.style.transform = `translateX(-${sliderIndex * (cardWidth + gap)}px)`;
+    }
+    nextBtn.addEventListener('click', () => {
+        const totalCards = document.querySelectorAll('.category-item-card').length;
+        const visibleCards = getVisibleCardsCount();
+        if (sliderIndex < totalCards - visibleCards) {
+            sliderIndex++;
+            updateSliderPosition();
+        }
+    });
+    prevBtn.addEventListener('click', () => {
+        if (sliderIndex > 0) {
+            sliderIndex--;
+            updateSliderPosition();
+        }
+    });
+    window.addEventListener('resize', () => {
+        sliderIndex = 0;
+        updateSliderPosition();
+    });
+    // Scroll Reveal Animation (Intersection Observer Pop-up Effect)
+    document.addEventListener("DOMContentLoaded", function () {
+        const sections = document.querySelectorAll(".reveal-section");
+        
+        const revealOptions = {
+            threshold: 0.12,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const revealObserver = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                } else {
+                    entry.target.classList.remove("active");
+                }
+            });
+        }, revealOptions);
+        sections.forEach(section => {
+            revealObserver.observe(section);
+        });
+    });
+</script>
+<%- include('partials/footer') %>
