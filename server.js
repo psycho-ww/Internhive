@@ -70,7 +70,7 @@ const upload = multer({
 // ==========================================
 // ၁။ PUBLIC LANDING PAGE
 app.get('/', (req, res) => {
-    res.render('landing');
+    res.render('index');
 });
 app.get('/about_us', (req, res) => {
     res.render('about_us'); 
@@ -107,7 +107,7 @@ app.get('/projects', async (req, res) => {
                 );
             } catch(e) {}
         }
-        res.render('index', { posts, search, history });
+        res.render('landing', { posts, search, history });
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading project hub");
